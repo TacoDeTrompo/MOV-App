@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.UserFragment">
+
+    <ImageView
+        android:id="@+id/imageViewProfile"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/editUserName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Nombre de Usuario"
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@+id/imageViewProfile"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Nombre"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="@+id/imageViewProfile"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewProfile" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Apellido"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="@+id/textView19"
+        app:layout_constraintTop_toBottomOf="@+id/editFirstName" />
+
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Correo"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="@+id/textView19"
+        app:layout_constraintTop_toBottomOf="@+id/editLastName" />
+
+    <EditText
+        android:id="@+id/editFirstName"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="39dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/editUserName"
+        app:layout_constraintStart_toEndOf="@+id/textView19"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewProfile" />
+
+    <EditText
+        android:id="@+id/editLastName"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="39dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/editFirstName"
+        app:layout_constraintStart_toStartOf="@+id/editFirstName"
+        app:layout_constraintTop_toBottomOf="@+id/editFirstName" />
+
+    <EditText
+        android:id="@+id/editEmail"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="39dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/editLastName"
+        app:layout_constraintStart_toStartOf="@+id/editLastName"
+        app:layout_constraintTop_toBottomOf="@+id/editLastName" />
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="153dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/empty_button"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Guardar Cambios"
+        app:layout_constraintEnd_toEndOf="@+id/editEmail"
+        app:layout_constraintTop_toBottomOf="@+id/editEmail" />
+
+    <Button
+        android:id="@+id/buttonSave3"
+        android:layout_width="153dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/empty_button"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Cerrar Sesion"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSave"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSave" />
+
+    <Button
+        android:id="@+id/buttonResetPass"
+        android:layout_width="153dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/empty_button"
+        android:fontFamily="@font/blogger_sans"
+        android:text="Reestablecer Contraseña"
+        app:layout_constraintStart_toStartOf="@+id/textView21"
+        app:layout_constraintTop_toBottomOf="@+id/editEmail" />
+</androidx.constraintlayout.widget.ConstraintLayout>

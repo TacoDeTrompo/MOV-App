@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/idFrameLayoutCardProfile2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0026BC58"
+        android:backgroundTint="#00FFFFFF"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/txtDescription"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:editable="false"
+                android:ems="10"
+                android:gravity="start|top"
+                android:inputType="textMultiLine"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="36dp" />
+
+            <TextView
+                android:id="@+id/textTranName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/blogger_sans"
+                android:text="Transaccion"
+                android:textColor="#000000"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="6dp" />
+
+            <TextView
+                android:id="@+id/textTrDescripcion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/blogger_sans"
+                android:text="Descripción"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/textTranName"
+                app:layout_constraintTop_toBottomOf="@+id/textTranName" />
+
+            <TextView
+                android:id="@+id/textTrAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/blogger_sans"
+                android:text="$800"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textTrDescripcion"
+                app:layout_constraintEnd_toEndOf="@+id/imageBupdate" />
+
+            <ImageButton
+                android:id="@+id/imageBdelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="#00000000"
+                android:tint="#000000"
+                app:layout_constraintEnd_toStartOf="@+id/imageBupdate"
+                app:srcCompat="@drawable/ic_baseline_delete_24"
+                tools:layout_editor_absoluteY="6dp" />
+
+            <ImageButton
+                android:id="@+id/imageBupdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="18dp"
+                android:background="#00FFFFFF"
+                android:tint="#020000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_baseline_create_24"
+                tools:layout_editor_absoluteY="6dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

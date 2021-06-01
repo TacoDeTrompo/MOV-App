@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="transaction_types_array">
+        <item>Gasto</item>
+        <item>Ingreso</item>
+    </string-array>
+</resources>

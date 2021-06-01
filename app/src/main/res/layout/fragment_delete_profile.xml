@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.DeleteProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/buttonDelPrRegresar"
+            android:layout_width="138dp"
+            android:layout_height="57dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/empty_button"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Regresar"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewDraft" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="100dp"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Perfiles"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDraft"
+            android:layout_width="399dp"
+            android:layout_height="378dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

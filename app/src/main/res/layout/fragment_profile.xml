@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="100dp"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Perfil"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="382dp"
+            android:layout_height="433dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/ic_espacio_de_rellenar2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView10">
+
+            <TextView
+                android:id="@+id/textFecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="60dp"
+                android:fontFamily="@font/blogger_sans"
+                android:text="Fecha"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textDescripcion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:fontFamily="@font/blogger_sans"
+                android:text="Descripcion"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textFecha" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView2"
+                android:layout_width="344dp"
+                android:layout_height="296dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/textTotalExpenses"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textDescripcion" />
+
+            <TextView
+                android:id="@+id/textTotalExpenses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="57dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/blogger_sans"
+                android:text="Total: $0"
+                android:textColor="#000000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/buttonPrRegresar2"
+            android:layout_width="138dp"
+            android:layout_height="57dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/empty_button"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Borrar Perfil"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonAddTransaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="#000000"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/buttonPrRegresar2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
