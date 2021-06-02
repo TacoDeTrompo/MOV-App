@@ -15,11 +15,11 @@ interface Service {
     @GET("ingress/{id}")
     fun getIngress(@Path("id") id: Int): Call<Ingress>
 
-    @GET("expenses")
-    fun getExpenses(): Call<List<Expense>>
+    @GET("profile/{id}/expenses")
+    fun getExpensesByProfile(@Path("id") id: Int): Call<List<Expense>>
 
-    @GET("ingress")
-    fun getIngresses(): Call<List<Ingress>>
+    @GET("profile/{id}/ingress")
+    fun getIngressesById(@Path("id") id: Int): Call<List<Ingress>>
 
     @GET("userdata/{id}")
     fun getUserData(@Path("id") id: Int): Call<User>
