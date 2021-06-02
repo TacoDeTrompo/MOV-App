@@ -45,9 +45,16 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
         val root = inflater.inflate(R.layout.fragment_profiles, container, false)
 
         val rcListProfile:RecyclerView = root.findViewById<RecyclerView>(R.id.recyclerView)
-        rcListProfile.layoutManager = LinearLayoutManager(this.context2!!)
-        this.profileAdapter = ProfileRecyclerAdapter(this.context2!!, UserApplication.dbHelper.getListOfProfiles(), this)
-        rcListProfile.adapter = this.profileAdapter
+
+        val self = this
+
+        getProfiles(object : ServiceCallback {
+            override fun onSuccess(result: MutableList<Profile>) {
+                rcListProfile.layoutManager = LinearLayoutManager(context2!!)
+                profileAdapter = ProfileRecyclerAdapter(context2!!, UserApplication.dbHelper.getListOfProfiles(), self)
+                rcListProfile.adapter = profileAdapter
+            }
+        })
 
         return root
     }
@@ -68,7 +75,7 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
         findNavController().navigateSafe(action)
     }
 
-    private fun getProfiles(){
+    private fun getProfiles(apiServiceInterface: ServiceCallback){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val result: Call<List<Profile>> = service.getProfiles()
 
@@ -80,7 +87,8 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
             override fun onResponse(call: Call<List<Profile>>, response: Response<List<Profile>>) {
                 val arrayItems = response.body()
                 var profile: Profile
-                val profiles: MutableList<Profile>
+                val profiles: MutableList<Profile> = arrayItems!!.toMutableList()
+                apiServiceInterface.onSuccess(profiles)
             }
         })
     }

@@ -27,7 +27,7 @@ class ViewPagerAdapater(fragmentManager: FragmentManager, lifecycle: Lifecycle) 
         val profilesFragment =  ProfilesFragment()
         val profileFragment = ProfileFragment()
         val adviceFragment = AdviceFragment()
-        val draftFragment = ProfilesFragment()
+        val draftFragment = ProfilesDraftFragment()
         val userFragment = UserFragment()
 
         //Tenemos 2 formas de pasar información a ese fragment
