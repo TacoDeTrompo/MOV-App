@@ -41,4 +41,8 @@ interface Service {
     @Headers("Content-Type: application/json")
     @POST("createProfile")
     fun createProfile(@Body profile: Profile): Call<Boolean>
+
+    @Headers("Content-Type: application/json")
+    @POST("updateProfile")
+    fun updateProfile(@Body profile: Profile): Call<Boolean>
 }
