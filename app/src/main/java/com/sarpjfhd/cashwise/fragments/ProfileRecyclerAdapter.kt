@@ -16,10 +16,11 @@ import com.sarpjfhd.cashwise.models.Profile
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 
-class ProfileRecyclerAdapter(val context: Context, var profiles:MutableList<Profile>, cardOnClickListener: CardOnClickListener): RecyclerView.Adapter<ProfileRecyclerAdapter.ViewHolder>(), Filterable {
+class ProfileRecyclerAdapter(val context: Context, var profiles:MutableList<Profile>, cardOnClickListener: CardOnClickListener, isDraft: Boolean): RecyclerView.Adapter<ProfileRecyclerAdapter.ViewHolder>(), Filterable {
 
     private  val layoutInflater =  LayoutInflater.from(context)
     private val listener: CardOnClickListener = cardOnClickListener
+    private val isDraft = isDraft
 
     inner class  ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView), View.OnClickListener{
 
@@ -68,24 +69,29 @@ class ProfileRecyclerAdapter(val context: Context, var profiles:MutableList<Prof
         holder.txtDayRange.text = dayRangeStr
         val endDate = profile.startDate.plusDays(profile.dayRange.toLong())
         val difference = ChronoUnit.DAYS.between(profile.startDate, endDate)
-        if (difference <= profile.dayRange) {
-            holder.txtStatus.text = "En curso"
+        if(isDraft){
+            holder.txtStatus.text = "Borrador"
+            holder.txtTotal.text = "Total: $0"
         } else {
-            holder.txtStatus.text = "Concluido"
+            if (difference <= profile.dayRange) {
+                holder.txtStatus.text = "En curso"
+            } else {
+                holder.txtStatus.text = "Concluido"
+                val list = UserApplication.dbHelper.getListOfIngress(profile.idBD)
+                val exList = UserApplication.dbHelper.getListOfExpense(profile.idBD)
+                var amount: BigDecimal = BigDecimal(0)
+                var expenses: BigDecimal = BigDecimal(0)
+                for (ingress in list) {
+                    amount += ingress.amount
+                }
+                for (expense in exList) {
+                    expenses += expense.amount
+                }
+                val diff = amount - expenses
+                val total = "Total: $${diff.toString()}"
+                holder.txtTotal.text = total
+            }
         }
-        val list = UserApplication.dbHelper.getListOfIngress(profile.idBD)
-        val exList = UserApplication.dbHelper.getListOfExpense(profile.idBD)
-        var amount: BigDecimal = BigDecimal(0)
-        var expenses: BigDecimal = BigDecimal(0)
-        for (ingress in list) {
-            amount += ingress.amount
-        }
-        for (expense in exList) {
-            expenses += expense.amount
-        }
-        val diff = amount - expenses
-        val total = "Total: $${diff.toString()}"
-        holder.txtTotal.text = total
         holder.cardColor.backgroundTintList = ColorStateList.valueOf(profile.color.toInt())
 
         holder.cardColor.setOnClickListener {
@@ -95,5 +101,11 @@ class ProfileRecyclerAdapter(val context: Context, var profiles:MutableList<Prof
 
     override fun getFilter(): Filter {
         TODO("Not yet implemented")
+    }
+
+    fun getItemPosition(idDB: Int): Int {
+        return profiles.indexOfFirst {
+            a -> a.idBD == idDB
+        }
     }
 }

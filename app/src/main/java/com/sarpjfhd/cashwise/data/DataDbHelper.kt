@@ -176,7 +176,7 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             var startDate =  LocalDate.parse(data.getString(data.getColumnIndex(SetDB.tblProfile.COL_STARTDAY)).toString(), formatter)
             var color =  data.getString(data.getColumnIndex(SetDB.tblProfile.COL_COLOR)).toString()
             var description = data.getString(data.getColumnIndex(SetDB.tblProfile.COL_DESCRIPTION)).toString()
-            val profile = Profile(profileName, dayRange, startDate, color, description)
+            profile = Profile(profileName, dayRange, startDate, color, description)
             profile.idBD = data.getString(data.getColumnIndex(SetDB.tblProfile.COL_ID)).toInt()
 
         }
@@ -500,7 +500,7 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         values.put(SetDB.tblProfile.COL_COLOR, profile.color)
         values.put(SetDB.tblProfile.COL_DESCRIPTION, profile.descrption)
 
-        val where:String =  SetDB.tblProfile.COL_ID + "=?"
+        val where:String = SetDB.tblProfile.COL_ID + "=?"
 
         try{
 
@@ -514,7 +514,6 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             }
             else {
                 Toast.makeText(this.context, "Failed", Toast.LENGTH_SHORT).show()
-
             }
 
         }catch (e: Exception){

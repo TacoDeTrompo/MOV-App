@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_homeFragment_to_createProfileFragment"
             app:destination="@id/createProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_draftUpdateFragment"
+            app:destination="@id/draftUpdateFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -35,4 +38,8 @@
         android:name="com.sarpjfhd.cashwise.fragments.CreateProfileFragment"
         android:label="fragment_create_profile"
         tools:layout="@layout/fragment_create_profile" />
+    <fragment
+        android:id="@+id/draftUpdateFragment"
+        android:name="com.sarpjfhd.cashwise.fragments.DraftUpdateFragment"
+        android:label="DraftUpdateFragment" />
 </navigation>

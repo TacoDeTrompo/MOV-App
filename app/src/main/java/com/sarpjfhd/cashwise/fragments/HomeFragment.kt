@@ -8,12 +8,15 @@ import android.widget.Button
 import android.widget.TableLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
+import com.sarpjfhd.cashwise.UserApplication
+import com.sarpjfhd.cashwise.models.User
 import com.sarpjfhd.cashwise.navigateSafe
 
 class HomeFragment : Fragment() {
@@ -23,6 +26,9 @@ class HomeFragment : Fragment() {
 //    private lateinit var buttonDeleteProfile: Button
     private lateinit var tabLayout: TabLayout
     private lateinit var pager: ViewPager2
+    private lateinit var pagerAdapater: ViewPagerAdapater
+    private lateinit var profileAdapter: ProfileRecyclerAdapter
+    private lateinit var draftFragment: ProfilesDraftFragment
     private val viewModel: MainViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +42,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         tabLayout = view.findViewById(R.id.tabLayoutMain)
         pager = view.findViewById(R.id.pager)
-        pager.adapter = ViewPagerAdapater(requireActivity().supportFragmentManager, lifecycle)
+        pagerAdapater = ViewPagerAdapater(requireActivity().supportFragmentManager, lifecycle, ProfilesDraftFragment())
+        pager.adapter = pagerAdapater
 
         //Aqui ya sabe quien es nuestro tab, y quien nuestro pager
         val tabLayoutMediator =  TabLayoutMediator(tabLayout, pager
@@ -57,5 +64,13 @@ class HomeFragment : Fragment() {
                 }
             })
         tabLayoutMediator.attach()
+
+        setFragmentResultListener(DraftUpdateFragment.REQUEST_KEY_SAVED) { _, bundle ->
+            val idProf = bundle.getInt(DraftUpdateFragment.BUNDLE_KEY_SAVED, -1)
+            if (idProf != -1) {
+                pagerAdapater = ViewPagerAdapater(requireActivity().supportFragmentManager, lifecycle, ProfilesDraftFragment())
+                pager.adapter = pagerAdapater
+            }
+        }
     }
 }

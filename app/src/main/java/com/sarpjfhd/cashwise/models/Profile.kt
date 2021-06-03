@@ -22,11 +22,12 @@ class Profile(profileName: String, dayRange: Int, startDate: LocalDate, color: S
         return Profile(this.profileName, this.dayRange, this.startDate, this.color, this.descrption)
     }
 
-    fun makeNew(profileName: String, dayRange: Int, color: String, description: String) {
+    fun makeNew(profileName: String, dayRange: Int, color: String, description: String, idDB: Int) {
         this.profileName = profileName
         this.dayRange = dayRange
         this.startDate = LocalDate.now()
         this.color = color
         this.descrption = descrption
+        this.idBD = idDB
     }
 }

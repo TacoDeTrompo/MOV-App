@@ -7,13 +7,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-//Extiende de FragmentStateAdapter
-
-class ViewPagerAdapater(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle)  {
+class ViewPagerAdapater(fragmentManager: FragmentManager, lifecycle: Lifecycle, draftFragment: ProfilesDraftFragment) : FragmentStateAdapter(fragmentManager, lifecycle)  {
     private var profilesFragmentState: Int = 0
     fun changeProfileFragment(state: Int = 0){
         profilesFragmentState = state
     }
+    var draftFragment: ProfilesDraftFragment = draftFragment
     //Constante a nivel de clase
     companion object{
         private  const val ARG_OBJECT = "object"
@@ -27,7 +26,6 @@ class ViewPagerAdapater(fragmentManager: FragmentManager, lifecycle: Lifecycle) 
         val profilesFragment =  ProfilesFragment()
         val profileFragment = ProfileFragment()
         val adviceFragment = AdviceFragment()
-        val draftFragment = ProfilesDraftFragment()
         val userFragment = UserFragment()
 
         //Tenemos 2 formas de pasar información a ese fragment

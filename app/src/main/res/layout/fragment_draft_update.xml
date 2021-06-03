@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.CreateProfileFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <RadioButton
-            android:id="@+id/radio60dias"
+            android:id="@+id/radio60diasD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -19,8 +15,8 @@
             android:text="60"
             android:textColor="#000000"
             android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@+id/radio30dias"
-            app:layout_constraintTop_toBottomOf="@+id/radio30dias" />
+            app:layout_constraintStart_toStartOf="@+id/radio30diasD"
+            app:layout_constraintTop_toBottomOf="@+id/radio30diasD" />
 
         <TextView
             android:id="@+id/textView4"
@@ -31,11 +27,11 @@
             android:text="Nombre del perfil"
             android:textColor="#000000"
             android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonNameD"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/editTextTextPersonNameD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -57,10 +53,10 @@
             android:textColor="#000000"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonNameD" />
 
         <RadioButton
-            android:id="@+id/radio7dias"
+            android:id="@+id/radio7diasD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -73,7 +69,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
         <RadioButton
-            android:id="@+id/radio15dias"
+            android:id="@+id/radio15diasD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -83,10 +79,10 @@
             android:textColor="#000000"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radio7dias" />
+            app:layout_constraintTop_toBottomOf="@+id/radio7diasD" />
 
         <RadioButton
-            android:id="@+id/radio30dias"
+            android:id="@+id/radio30diasD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
@@ -94,11 +90,11 @@
             android:text="30"
             android:textColor="#000000"
             android:textSize="15sp"
-            app:layout_constraintStart_toEndOf="@+id/radio7dias"
-            app:layout_constraintTop_toTopOf="@+id/radio7dias" />
+            app:layout_constraintStart_toEndOf="@+id/radio7diasD"
+            app:layout_constraintTop_toTopOf="@+id/radio7diasD" />
 
         <View
-            android:id="@+id/viewColor"
+            android:id="@+id/viewColorD"
             android:layout_width="75dp"
             android:layout_height="76dp"
             android:layout_marginTop="10dp"
@@ -117,10 +113,10 @@
             android:textColor="#000000"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonNameD" />
 
         <EditText
-            android:id="@+id/editDescripcion"
+            android:id="@+id/editDescripcionD"
             android:layout_width="305dp"
             android:layout_height="174dp"
             android:layout_marginStart="50dp"
@@ -145,35 +141,35 @@
             android:textColor="#000000"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radio15dias" />
+            app:layout_constraintTop_toBottomOf="@+id/radio15diasD" />
 
         <Button
-            android:id="@+id/buttonCancel"
+            android:id="@+id/buttonCancelD"
+            android:layout_width="129dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/empty_button"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Cancelar"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/buttonCreatePrD"
+            app:layout_constraintTop_toBottomOf="@+id/buttonCreatePrD" />
+
+        <Button
+            android:id="@+id/buttonSaveDraft"
             android:layout_width="129dp"
             android:layout_height="56dp"
             android:layout_marginStart="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/empty_button"
             android:fontFamily="@font/blogger_sans"
-            android:text="Cancelar"
+            android:text="Actualizar Borrador"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editDescripcion" />
+            app:layout_constraintTop_toBottomOf="@+id/editDescripcionD" />
 
         <Button
-            android:id="@+id/buttonSaveDraftP"
-            android:layout_width="129dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/empty_button"
-            android:fontFamily="@font/blogger_sans"
-            android:text="Guardar  Borrador"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="@+id/buttonCreatePr"
-            app:layout_constraintTop_toBottomOf="@+id/buttonCreatePr" />
-
-        <Button
-            android:id="@+id/buttonCreatePr"
+            android:id="@+id/buttonCreatePrD"
             android:layout_width="129dp"
             android:layout_height="56dp"
             android:layout_marginTop="20dp"
@@ -183,7 +179,5 @@
             android:text="Crear Perfil"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editDescripcion" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+            app:layout_constraintTop_toBottomOf="@+id/editDescripcionD" />
+</androidx.constraintlayout.widget.ConstraintLayout>

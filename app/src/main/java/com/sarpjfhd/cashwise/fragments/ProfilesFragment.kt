@@ -51,7 +51,7 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
         getProfiles(object : ServiceCallback {
             override fun onSuccess(result: MutableList<Profile>) {
                 rcListProfile.layoutManager = LinearLayoutManager(context2!!)
-                profileAdapter = ProfileRecyclerAdapter(context2!!, UserApplication.dbHelper.getListOfProfiles(), self)
+                profileAdapter = ProfileRecyclerAdapter(context2!!, UserApplication.dbHelper.getListOfProfiles(), self, false)
                 rcListProfile.adapter = profileAdapter
             }
         })

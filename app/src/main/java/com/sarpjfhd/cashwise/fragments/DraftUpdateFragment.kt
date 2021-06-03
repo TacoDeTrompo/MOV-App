@@ -10,13 +10,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
-import com.sarpjfhd.cashwise.UserApplication.Companion.dbHelper
 import com.sarpjfhd.cashwise.data.DataDbHelper
 import com.sarpjfhd.cashwise.models.Profile
 import com.sarpjfhd.cashwise.models.RestEngine
@@ -28,7 +30,7 @@ import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
 import java.time.LocalDate
 
-class CreateProfileFragment : Fragment() {
+class DraftUpdateFragment : Fragment() {
     private lateinit var editName: EditText
     private lateinit var editDescription: EditText
     private lateinit var buttonCancel: Button
@@ -41,67 +43,81 @@ class CreateProfileFragment : Fragment() {
     private lateinit var radio30: RadioButton
     private lateinit var radio60: RadioButton
     private lateinit var profile: Profile
+
+    companion object {
+        const val REQUEST_KEY_SAVED = "REQUEST_KEY_SAVED"
+        const val BUNDLE_KEY_SAVED = "BUNDLE_KEY_SAVED"
+    }
+
     private val viewModel: MainViewModel by activityViewModels()
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_create_profile, container, false)
+        return inflater.inflate(R.layout.fragment_draft_update, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editName = view.findViewById(R.id.editTextTextPersonName)
-        editDescription = view.findViewById(R.id.editDescripcion)
-        buttonCancel = view.findViewById(R.id.buttonCancel)
-        buttonCreatePr = view.findViewById(R.id.buttonCreatePr)
-        buttonSaveDraft = view.findViewById(R.id.buttonSaveDraftP)
-        viewColor = view.findViewById(R.id.viewColor)
-        radio7 = view.findViewById(R.id.radio7dias)
-        radio15 = view.findViewById(R.id.radio15dias)
-        radio30 = view.findViewById(R.id.radio30dias)
-        radio60 = view.findViewById(R.id.radio60dias)
+        editName = view.findViewById(R.id.editTextTextPersonNameD)
+        editDescription = view.findViewById(R.id.editDescripcionD)
+        buttonCancel = view.findViewById(R.id.buttonCancelD)
+        buttonCreatePr = view.findViewById(R.id.buttonCreatePrD)
+        buttonSaveDraft = view.findViewById(R.id.buttonSaveDraft)
+        viewColor = view.findViewById(R.id.viewColorD)
+        radio7 = view.findViewById(R.id.radio7diasD)
+        radio15 = view.findViewById(R.id.radio15diasD)
+        radio30 = view.findViewById(R.id.radio30diasD)
+        radio60 = view.findViewById(R.id.radio60diasD)
         buttonCancel.setOnClickListener {
             findNavController().popBackStack()
         }
+        profile = UserApplication.dbHelper.getProfile(viewModel.profileId)!!
+        editName.setText(profile?.profileName)
+        editDescription.setText(profile?.descrption)
+        when (profile?.dayRange){
+            7-> {
+                radio7.isChecked = true
+            }
+            15-> {
+                radio15.isChecked = true
+            }
+            30-> {
+                radio30.isChecked = true
+            }
+            60-> {
+                radio60.isChecked = true
+            }
+        }
+        buttonCreatePr.setOnClickListener {
+            uploadProfile(profile)
+        }
+        viewColor.setBackgroundColor(profile?.color?.toInt()!!)
         buttonSaveDraft.setOnClickListener {
             val name: String = editName.text.toString()
             val description: String = editDescription.text.toString()
             var dayRange: Int = 0
-            if (radio7.isChecked) {
-                dayRange = 7
-            } else if (radio15.isChecked) {
-                dayRange = 15
-            } else if (radio30.isChecked) {
-                dayRange = 30
-            } else if (radio60.isChecked) {
-                dayRange = 60
+            when {
+                radio7.isChecked -> {
+                    dayRange = 7
+                }
+                radio15.isChecked -> {
+                    dayRange = 15
+                }
+                radio30.isChecked -> {
+                    dayRange = 30
+                }
+                radio60.isChecked -> {
+                    dayRange = 60
+                }
             }
             val color: Int = (viewColor.background as ColorDrawable).color
             if (dayRange != 0) {
-                profile = Profile(name, dayRange, LocalDate.now(), color.toString(), description)
-                UserApplication.dbHelper.insertProfile(profile)
+                profile.makeNew(name, dayRange, color.toString(), description, viewModel.profileId)
+                UserApplication.dbHelper.updateProfile(profile)
                 findNavController().navigateUp()
-            }
-        }
-        buttonCreatePr.setOnClickListener {
-            val name: String = editName.text.toString()
-            val description: String = editDescription.text.toString()
-            var dayRange: Int = 0
-            if (radio7.isChecked) {
-                dayRange = 7
-            } else if (radio15.isChecked) {
-                dayRange = 15
-            } else if (radio30.isChecked) {
-                dayRange = 30
-            } else if (radio60.isChecked) {
-                dayRange = 60
-            }
-            val color: Int = (viewColor.background as ColorDrawable).color
-            if (dayRange != 0) {
-                profile = Profile(name, dayRange, LocalDate.now(), color.toString(), description)
-                uploadProfile(profile)
+                setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
             }
         }
         viewColor.setOnClickListener {
@@ -116,14 +132,14 @@ class CreateProfileFragment : Fragment() {
             }
             var draw: ColorDrawable = viewColor.background as ColorDrawable
             colorPicker = ColorPickerPopup.Builder(view.context)
-                .initialColor(draw.color)
-                .enableBrightness(true)
-                .enableAlpha(false)
-                .okTitle("Choose")
-                .cancelTitle("Cancel")
-                .showIndicator(true)
-                .showValue(true)
-                .build()
+                    .initialColor(draw.color)
+                    .enableBrightness(true)
+                    .enableAlpha(false)
+                    .okTitle("Choose")
+                    .cancelTitle("Cancel")
+                    .showIndicator(true)
+                    .showValue(true)
+                    .build()
             colorPicker.show(viewColor, observer)
         }
 
@@ -162,17 +178,17 @@ class CreateProfileFragment : Fragment() {
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val result: Call<Boolean> = service.createProfile(profile)
 
-        result.enqueue(object: Callback<Boolean> {
+        result.enqueue(object: Callback<Boolean>{
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (!response.body()!!) {
-                    Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
+                if (response.body()!!) {
+                    Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
+                    UserApplication.dbHelper.deleteProfile(viewModel.profileId)
                 } else {
-                    Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
-                    findNavController().navigateUp()
+                    Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
                 }
             }
 
