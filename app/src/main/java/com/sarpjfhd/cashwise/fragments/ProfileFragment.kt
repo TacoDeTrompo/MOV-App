@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,7 +15,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
@@ -27,12 +31,17 @@ import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 
 class ProfileFragment : Fragment() {
+    private lateinit var tabLayout: TabLayout
+    private lateinit var pager: ViewPager2
+    private var expensesFragment: TransactionListFragment? = null
+    private var ingressesFragment: TransactionListFragment? = null
     private lateinit var buttonAddTransaction: FloatingActionButton
-    private lateinit var buttonReturn: Button
+    private lateinit var btnUpdateProfile: ImageButton
+    private lateinit var btnDeleteProfile: ImageButton
     private lateinit var txtTotalAmount: TextView
     private lateinit var txtDate: TextView
     private lateinit var txtDescription: TextView
-    private var transactionAdapter:TransactionRecyclerAdapter? = null
+    private var transactionAdapter:TransactionPagerAdapater? = null
     private var context2: Context? = null
     private val viewModel: MainViewModel by activityViewModels()
 
@@ -49,25 +58,19 @@ class ProfileFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        getExpenses(object: ServiceCallbackExpenses{
-            override fun onSuccess(result: MutableList<Expense>) {
-                val rcListTransaction: RecyclerView = root.findViewById<RecyclerView>(R.id.recyclerView2)
-                rcListTransaction.layoutManager = LinearLayoutManager(context2!!)
-                transactionAdapter = TransactionRecyclerAdapter(context2!!, result)
-                rcListTransaction.adapter = transactionAdapter
-            }
-        }, viewModel.profileId)
-
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buttonAddTransaction = view.findViewById(R.id.buttonAddTransaction)
-        buttonReturn = view.findViewById(R.id.buttonPrRegresar2)
         txtTotalAmount = view.findViewById(R.id.textTotalExpenses)
         txtDate = view.findViewById(R.id.textFecha)
         txtDescription = view.findViewById(R.id.textDescripcion)
+        btnUpdateProfile = view.findViewById(R.id.imageButtonEditPr)
+        btnDeleteProfile = view.findViewById(R.id.buttonPrRegresar2)
+        tabLayout = view.findViewById(R.id.tabLayoutMain)
+        pager = view.findViewById(R.id.pager)
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         var profile: Profile
         val list: MutableList<Ingress> = mutableListOf<Ingress>()
@@ -84,6 +87,7 @@ class ProfileFragment : Fragment() {
                 for (item in result) {
                     exList.add(item)
                 }
+                expensesFragment = TransactionListFragment(exList, arrayListOf(), true)
             }
         }, viewModel.profileId)
         getIngresses(object: ServiceCallbackIngresses{
@@ -91,8 +95,27 @@ class ProfileFragment : Fragment() {
                 for (item in result) {
                     list.add(item)
                 }
+                ingressesFragment = TransactionListFragment(arrayListOf(), list, false)
             }
         }, viewModel.profileId)
+        while (expensesFragment == null && ingressesFragment == null) {
+            TODO()
+        }
+        transactionAdapter = TransactionPagerAdapater(requireActivity().supportFragmentManager, lifecycle, expensesFragment!!, ingressesFragment!!)
+        pager.adapter = transactionAdapter
+
+        val tabLayoutMediator =  TabLayoutMediator(tabLayout, pager
+            , TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                when(position){
+                    0-> {
+                        tab.text =  "Gastos"
+                    }
+                    1-> {
+                        tab.text =  "Ingresos"
+                    }
+                }
+            })
+        tabLayoutMediator.attach()
 
         var amount: BigDecimal = BigDecimal(0)
         var expenses: BigDecimal = BigDecimal(0)
@@ -109,8 +132,18 @@ class ProfileFragment : Fragment() {
             val action = ProfileFragmentDirections.actionProfileFragmentToCreateTransactionFragment()
             findNavController().navigateSafe(action)
         }
-        buttonReturn.setOnClickListener {
-            findNavController().navigateUp()
+
+        btnUpdateProfile.setOnClickListener {
+            val action = ProfileFragmentDirections.actionProfileFragmentToProfileEditFragment()
+            findNavController().navigateSafe(action)
+        }
+
+        btnDeleteProfile.setOnClickListener {
+            deleteTransaction(object: ServiceCallback {
+                override fun onSuccess(result: Boolean) {
+                    TODO("Not yet implemented")
+                }
+            }, viewModel.profileId)
         }
     }
 
@@ -165,6 +198,21 @@ class ProfileFragment : Fragment() {
         })
     }
 
+    fun deleteTransaction(apiServiceInterface: ServiceCallback, profileId: Int) {
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<Boolean> = service.deleteProfile(profileId)
+
+        result.enqueue(object: Callback<Boolean> {
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error obteniendo los mensajes", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                apiServiceInterface.onSuccess(response.body()!!)
+            }
+        })
+    }
+
     public interface ServiceCallbackProfile {
         fun onSuccess(result: Profile)
     }
@@ -174,6 +222,7 @@ class ProfileFragment : Fragment() {
     public interface ServiceCallbackIngresses {
         fun onSuccess(result: MutableList<Ingress>)
     }
-
-
+    public interface ServiceCallback {
+        fun onSuccess(result: Boolean)
+    }
 }

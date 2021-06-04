@@ -50,9 +50,11 @@ class SetDB {
             val TABLE_NAME = "UserData"
             val COL_ID =  "intID"
             val COL_NAME =  "strName"
+            val COL_LAST_NAME = "strLastName"
             val COL_USERNAME = "strUsername"
             val COL_EMAIL =  "strEmail"
             val COL_TOKEN = "strToken"
+            val COL_IMG = "imgArray"
         }
     }
 }

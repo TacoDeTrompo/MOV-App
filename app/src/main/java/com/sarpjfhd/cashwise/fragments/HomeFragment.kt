@@ -42,6 +42,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         tabLayout = view.findViewById(R.id.tabLayoutMain)
         pager = view.findViewById(R.id.pager)
+        pager.offscreenPageLimit = 4
         pagerAdapater = ViewPagerAdapater(requireActivity().supportFragmentManager, lifecycle, ProfilesDraftFragment())
         pager.adapter = pagerAdapater
 

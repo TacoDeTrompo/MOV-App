@@ -1,33 +1,66 @@
 package com.sarpjfhd.cashwise.fragments
 
 import android.content.Context
+import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.models.Expense
+import com.sarpjfhd.cashwise.models.ExpenseType
+import com.sarpjfhd.cashwise.models.Ingress
+import com.sarpjfhd.cashwise.models.Transaction
 
-class TransactionRecyclerAdapter(val context: Context, var expense:MutableList<Expense>): RecyclerView.Adapter<TransactionRecyclerAdapter.ViewHolder>(), Filterable {
+class TransactionRecyclerAdapter(
+    val context: Context,
+    var expense: MutableList<Expense>,
+    var ingress: MutableList<Ingress>,
+    val isExpense: Boolean,
+    val moveInterface: MoveToEditTransactionFragment
+) : RecyclerView.Adapter<TransactionRecyclerAdapter.ViewHolder>(), Filterable {
 
-    private  val layoutInflater =  LayoutInflater.from(context)
+    private val layoutInflater = LayoutInflater.from(context)
 
-    inner class  ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView), View.OnClickListener{
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
 
-        val txtName = itemView?.findViewById<TextView>(R.id.textTranName)
-        val txtDescription = itemView?.findViewById<TextView>(R.id.textTrDescripcion)
-        val txtAmount = itemView?.findViewById<TextView>(R.id.textTrAmount)
+        lateinit var txtType: TextView
+        var txtName: TextView
+        var txtDescription: TextView
+        var txtAmount: TextView
+        var btnDelete: ImageButton
+        var btnUpdate:ImageButton
 
-        init{
+        init {
+            when (isExpense) {
+                true -> {
+                    txtType = itemView?.findViewById<TextView>(R.id.textExpType)
+                    txtName = itemView?.findViewById<TextView>(R.id.textTranName)
+                    txtDescription = itemView?.findViewById<TextView>(R.id.textTrDescripcion)
+                    txtAmount = itemView?.findViewById<TextView>(R.id.textTrAmount)
+                    btnDelete = itemView?.findViewById<ImageButton>(R.id.imageBdelete)
+                    btnUpdate = itemView?.findViewById<ImageButton>(R.id.imageBupdate)
+                }
+                false -> {
+                    txtName = itemView?.findViewById<TextView>(R.id.textTranName)
+                    txtDescription = itemView?.findViewById<TextView>(R.id.textTrDescripcion)
+                    txtAmount = itemView?.findViewById<TextView>(R.id.textTrAmount)
+                    btnDelete = itemView?.findViewById<ImageButton>(R.id.imageBdelete)
+                    btnUpdate = itemView?.findViewById<ImageButton>(R.id.imageBupdate)
+                }
+            }
             itemView.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
 
-            when(v!!.id){
-                R.id.idFrameLayoutCardProfile2->{
+            when (v!!.id) {
+                R.id.idFrameLayoutCardProfile2 -> {
                     //Lanzamos el intent para abrir el detall
                     //val  activityIntent =  Intent(context, MainActivity::class.java)
                     //activityIntent.putExtra(ALBUM_POSITION,this.albumPosition)
@@ -39,18 +72,52 @@ class TransactionRecyclerAdapter(val context: Context, var expense:MutableList<E
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView =  this.layoutInflater.inflate(R.layout.item_transaction_list,parent,false)
+        val itemView = when (isExpense) {
+            true -> this.layoutInflater.inflate(R.layout.item_transaction_list, parent, false)
+            false -> this.layoutInflater.inflate(R.layout.item_ingress_list, parent, false)
+        }
         return ViewHolder(itemView)
     }
 
-    override fun getItemCount(): Int  =  this.expense.size
+    override fun getItemCount(): Int{
+        return when (isExpense){
+            true -> this.expense.size
+            false -> this.ingress.size
+        }
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val expense = expense[position]
-        holder.txtName.text = expense.name
-        holder.txtDescription.text = expense.description
-        val total = "$${expense.amount.toString()}"
-        holder.txtAmount.text = total
+        val transaction: Transaction
+        when (isExpense) {
+            true -> {
+                val expense = expense[position]
+                holder.txtName.text = expense.name
+                holder.txtDescription.text = expense.description
+                val total = "$${expense.amount.toString()}"
+                holder.txtAmount.text = total
+                when (expense.type) {
+                    ExpenseType.FOOD -> holder.txtType.text = "Comida"
+                    ExpenseType.SERVICES -> holder.txtType.text = "Servicios"
+                    ExpenseType.ENTERTAINMENT -> holder.txtType.text = "Entretenimiento"
+                    ExpenseType.INVESTMENT -> holder.txtType.text = "Inversion"
+                }
+                transaction = expense
+            }
+            false -> {
+                val ingress = ingress[position]
+                holder.txtName.text = ingress.name
+                holder.txtDescription.text = ingress.description
+                val total = "$${ingress.amount.toString()}"
+                holder.txtAmount.text = total
+                transaction = ingress
+            }
+        }
+        holder.btnUpdate.setOnClickListener {
+            moveInterface.onUpdateClick()
+        }
+        holder.btnDelete.setOnClickListener {
+            moveInterface.onDeleteClick(transaction.idBD)
+        }
     }
 
     override fun getFilter(): Filter {

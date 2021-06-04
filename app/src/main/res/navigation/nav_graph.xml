@@ -27,6 +27,12 @@
         <action
             android:id="@+id/action_profileFragment_to_createTransactionFragment"
             app:destination="@id/createTransactionFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editTransactionFragment"
+            app:destination="@id/editTransactionFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/createTransactionFragment"
@@ -42,4 +48,12 @@
         android:id="@+id/draftUpdateFragment"
         android:name="com.sarpjfhd.cashwise.fragments.DraftUpdateFragment"
         android:label="DraftUpdateFragment" />
+    <fragment
+        android:id="@+id/editTransactionFragment"
+        android:name="com.sarpjfhd.cashwise.fragments.EditTransactionFragment"
+        android:label="EditTransactionFragment" />
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="com.sarpjfhd.cashwise.fragments.ProfileEditFragment"
+        android:label="ProfileEditFragment" />
 </navigation>

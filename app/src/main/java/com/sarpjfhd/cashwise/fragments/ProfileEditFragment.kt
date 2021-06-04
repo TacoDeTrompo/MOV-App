@@ -161,7 +161,7 @@ class ProfileEditFragment : Fragment() {
 
     private fun uploadProfile(serviceCallback: ServiceCallbackPOST,profile: Profile){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Boolean> = service.createProfile(profile)
+        val result: Call<Boolean> = service.updateProfile(profile)
 
         result.enqueue(object: Callback<Boolean>{
             override fun onFailure(call: Call<Boolean>, t: Throwable) {

@@ -21,74 +21,71 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/txtDescription"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginEnd="8dp"
-                android:editable="false"
-                android:ems="10"
-                android:gravity="start|top"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="36dp" />
-
             <TextView
-                android:id="@+id/textTranName"
-                android:layout_width="wrap_content"
+                android:id="@+id/textTranNameIn"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:fontFamily="@font/blogger_sans"
                 android:text="Transaccion"
                 android:textColor="#000000"
                 android:textSize="30sp"
+                app:layout_constraintEnd_toStartOf="@+id/imageBdeleteIn"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="6dp" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textTrDescripcion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/textTrDescripcionIn"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="30dp"
                 android:fontFamily="@font/blogger_sans"
                 android:text="Descripción"
                 android:textColor="#000000"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/textTranName"
-                app:layout_constraintTop_toBottomOf="@+id/textTranName" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textTrAmount"
+                app:layout_constraintStart_toStartOf="@+id/textTranNameIn"
+                app:layout_constraintTop_toBottomOf="@+id/textTranNameIn" />
 
             <TextView
                 android:id="@+id/textTrAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/blogger_sans"
                 android:text="$800"
                 android:textColor="#000000"
                 android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textTrDescripcion"
-                app:layout_constraintEnd_toEndOf="@+id/imageBupdate" />
+                app:layout_constraintBottom_toBottomOf="@+id/textTrDescripcionIn"
+                app:layout_constraintEnd_toEndOf="@+id/imageBupdateIn" />
 
             <ImageButton
-                android:id="@+id/imageBdelete"
+                android:id="@+id/imageBdeleteIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:background="#00000000"
-                android:tint="#000000"
-                app:layout_constraintEnd_toStartOf="@+id/imageBupdate"
-                app:srcCompat="@drawable/ic_baseline_delete_24"
-                tools:layout_editor_absoluteY="6dp" />
+                app:tint="#000000"
+                app:layout_constraintEnd_toStartOf="@+id/imageBupdateIn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_delete_24" />
 
             <ImageButton
-                android:id="@+id/imageBupdate"
+                android:id="@+id/imageBupdateIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
+                android:layout_marginBottom="10dp"
                 android:background="#00FFFFFF"
-                android:tint="#000000"
+                app:tint="#000000"
+                app:layout_constraintBottom_toTopOf="@+id/textTrAmount"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_baseline_create_24"
-                tools:layout_editor_absoluteY="6dp" />
+                app:layout_constraintTop_toTopOf="@+id/imageBdeleteIn"
+                app:srcCompat="@drawable/ic_baseline_create_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

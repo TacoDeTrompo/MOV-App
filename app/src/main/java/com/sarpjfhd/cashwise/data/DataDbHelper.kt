@@ -54,9 +54,11 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             val createUserDataTable:String =  "CREATE TABLE " + SetDB.tblUserData.TABLE_NAME + "(" +
                     SetDB.tblUserData.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     SetDB.tblUserData.COL_NAME + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_LAST_NAME + " VARCHAR(50)," +
                     SetDB.tblUserData.COL_USERNAME + " VARCHAR(50)," +
                     SetDB.tblUserData.COL_EMAIL + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_TOKEN + " INTEGER)"
+                    SetDB.tblUserData.COL_TOKEN + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_IMG + "BLOB)"
 
             db?.execSQL(createUserDataTable)
 
@@ -572,9 +574,11 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         var boolResult:Boolean =  true
 
         values.put(SetDB.tblUserData.COL_NAME, user.fullName)
+        values.put(SetDB.tblUserData.COL_LAST_NAME, user.lastName)
         values.put(SetDB.tblUserData.COL_USERNAME, user.username)
         values.put(SetDB.tblUserData.COL_EMAIL, user.email)
         values.put(SetDB.tblUserData.COL_TOKEN, user.token)
+        values.put(SetDB.tblUserData.COL_IMG, user.imgArray)
 
         try {
             val result =  dataBase.insert(SetDB.tblUserData.TABLE_NAME, null, values)
@@ -603,9 +607,11 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         //QUE COLUMNAS QUEREMOS QUE ESTE EN EL SELECT
         val columns:Array<String> =  arrayOf(SetDB.tblUserData.COL_ID,
             SetDB.tblUserData.COL_NAME,
+            SetDB.tblUserData.COL_LAST_NAME,
             SetDB.tblUserData.COL_USERNAME,
             SetDB.tblUserData.COL_EMAIL,
-            SetDB.tblUserData.COL_TOKEN)
+            SetDB.tblUserData.COL_TOKEN,
+            SetDB.tblUserData.COL_IMG)
 
         val where:String =  SetDB.tblUserData.COL_ID + "= ${intID.toString()}"
 
@@ -618,15 +624,75 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             SetDB.tblProfile.COL_ID + " ASC")
 
         if(data.moveToFirst()){
+            var idDB = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_ID)).toInt()
             var token = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_TOKEN)).toString()
             var fullName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_NAME)).toString()
+            var lastName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_LAST_NAME)).toString()
             var userName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_USERNAME)).toString()
             var email = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_EMAIL)).toString()
-            user = User(token, fullName, userName, email, ByteArray(20))
+            var image = data.getBlob(data.getColumnIndex(SetDB.tblUserData.COL_IMG))
+            user = User(token, fullName, lastName, userName, email, image, idDB)
 
         }
 
         data.close()
         return user
+    }
+
+    public fun updateProfile(user: User):Boolean{
+
+        val dataBase:SQLiteDatabase = this.writableDatabase
+        val values: ContentValues = ContentValues()
+        var boolResult:Boolean =  true
+
+        values.put(SetDB.tblUserData.COL_NAME, user.fullName)
+        values.put(SetDB.tblUserData.COL_LAST_NAME, user.lastName)
+        values.put(SetDB.tblUserData.COL_USERNAME, user.username)
+        values.put(SetDB.tblUserData.COL_EMAIL, user.email)
+        values.put(SetDB.tblUserData.COL_TOKEN, user.imgArray)
+
+        val where:String = SetDB.tblUserData.COL_ID + "=?"
+
+        try{
+
+            val result =  dataBase.update(SetDB.tblUserData.TABLE_NAME,
+                values,
+                where,
+                arrayOf(user.idDB.toString()))
+
+            if (result != -1 ) {
+                Toast.makeText(this.context, "Success", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this.context, "Failed", Toast.LENGTH_SHORT).show()
+            }
+
+        }catch (e: Exception){
+            boolResult = false
+            Log.e("Execption", e.toString())
+        }
+
+        dataBase.close()
+        return  boolResult
+    }
+
+    public fun deleteUser(intID: Int): Boolean {
+        val db = this.writableDatabase
+        var boolResult:Boolean =  false
+        try{
+
+            val where:String =  SetDB.tblUserData.COL_ID + "=?"
+            val _success = db.delete(SetDB.tblUserData.TABLE_NAME, where, arrayOf(intID.toString()))
+            db.close()
+
+            boolResult = Integer.parseInt("$_success") != -1
+
+
+        }catch (e: Exception){
+
+            Log.e("Execption", e.toString())
+        }
+
+        return  boolResult
     }
 }
