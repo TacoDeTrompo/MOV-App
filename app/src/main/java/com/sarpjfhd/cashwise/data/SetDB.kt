@@ -55,6 +55,7 @@ class SetDB {
             val COL_EMAIL =  "strEmail"
             val COL_TOKEN = "strToken"
             val COL_IMG = "imgArray"
+            val COL_CLOUD_ID = "intCloudID"
         }
     }
 }

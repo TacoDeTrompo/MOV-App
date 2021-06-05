@@ -1,36 +1,53 @@
 package com.sarpjfhd.cashwise.models
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface Service {
-    @GET("profiles/{id}")
-    fun getProfile(@Path("id") id: Int): Call<Profile>
+    @Headers("Content-Type: application/json")
+    @POST("getProfile.php")
+    fun getProfile(@Body profile: Profile): Call<Profile>
 
-    @GET("profiles/{id}")
-    fun deleteProfile(@Path("id") id: Int): Call<Boolean>
+    @Headers("Content-Type: application/json")
+    @POST("deleteProfile.php")
+    fun deleteProfile(profile: Profile): Call<ResponseBody>
 
-    @GET("profiles")
-    fun getProfiles(): Call<List<Profile>>
+    @Headers("Content-Type: application/json")
+    @POST("getProfiles.php")
+    fun getProfiles(@Body user: User): Call<List<Profile>>
 
-    @GET("expenses/{id}")
-    fun getExpenses(@Path("id") id: Int): Call<Expense>
+    @Headers("Content-Type: application/json")
+    @POST("getExpense.php")
+    fun getExpenses(transactionData: TransactionData): Call<Expense>
 
-    @GET("transaction/{id}")
-    fun deleteTransaction(@Path("id") id: Int): Call<Boolean>
+    @Headers("Content-Type: application/json")
+    @POST("transactionDelete.php")
+    fun deleteTransaction(transactionData: TransactionData): Call<ResponseBody>
 
-    @GET("ingress/{id}")
-    fun getIngress(@Path("id") id: Int): Call<Ingress>
+    @Headers("Content-Type: application/json")
+    @POST("transactionInsert.php")
+    fun createTransaction(transactionData: TransactionData): Call<ResponseBody>
 
-    @GET("profile/{id}/expenses")
-    fun getExpensesByProfile(@Path("id") id: Int): Call<List<Expense>>
+    @Headers("Content-Type: application/json")
+    @POST("transactionUpdate.php")
+    fun updateTransaction(transactionData: TransactionData): Call<ResponseBody>
 
-    @GET("profile/{id}/ingress")
-    fun getIngressesById(@Path("id") id: Int): Call<List<Ingress>>
+    @Headers("Content-Type: application/json")
+    @POST("getIngress.php")
+    fun getIngress(transactionData: TransactionData): Call<Ingress>
+
+    @Headers("Content-Type: application/json")
+    @POST("getExpenses.php")
+    fun getExpensesByProfile(profile: Profile): Call<List<Expense>>
+
+    @Headers("Content-Type: application/json")
+    @POST("getIngresses.php")
+    fun getIngressesById(profile: Profile): Call<List<Ingress>>
 
     @GET("userdata/{id}")
     fun getUserData(@Path("id") id: Int): Call<User>
 
-    @GET("advice")
+    @GET("getAdvices.php")
     fun getAdvices(): Call<List<Advice>>
 
     @GET("advice/{id}")
@@ -41,16 +58,20 @@ interface Service {
     fun checkToken(@Body token: String): Call<Boolean>
 
     @Headers("Content-Type: application/json")
-    @POST("login")
-    fun logIn(@Body userData: User): Call<String>
+    @POST("login.php")
+    fun logIn(@Body userData: LogInData): Call<User>
 
     @Headers("Content-Type: application/json")
-    @POST("createProfile")
-    fun createProfile(@Body profile: Profile): Call<Boolean>
+    @POST("signup.php")
+    fun signUp(@Body userData: User): Call<User>
 
     @Headers("Content-Type: application/json")
-    @POST("updateProfile")
-    fun updateProfile(@Body profile: Profile): Call<Boolean>
+    @POST("profileInsert.php")
+    fun createProfile(@Body profile: Profile): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST("updateProfile.php")
+    fun updateProfile(@Body profile: Profile): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("updateTransaction")
@@ -59,4 +80,16 @@ interface Service {
     @Headers("Content-Type: application/json")
     @POST("updateTransaction")
     fun updateIngress(@Body ingress: Ingress): Call<Boolean>
+
+    @Headers("Content-Type: application/json")
+    @POST("updateUserData.php")
+    fun updateUser(@Body user: User): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST("updatePassword.php")
+    fun resetPassword(@Body passwordReset: PasswordReset): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST("insertAdvices.php")
+    fun uploadAdvice(@Body advice: Advice): Call<ResponseBody>
 }

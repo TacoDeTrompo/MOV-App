@@ -27,6 +27,18 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
 
             db?.execSQL(createProfileTable)
 
+            val createUserDataTable:String =  "CREATE TABLE " + SetDB.tblUserData.TABLE_NAME + "(" +
+                    SetDB.tblUserData.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    SetDB.tblUserData.COL_NAME + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_LAST_NAME + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_USERNAME + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_EMAIL + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_TOKEN + " VARCHAR(50)," +
+                    SetDB.tblUserData.COL_IMG + " BLOB," +
+                    SetDB.tblUserData.COL_CLOUD_ID + " INTEGER)"
+
+            db?.execSQL(createUserDataTable)
+
             val createTransactionTable:String =  "CREATE TABLE " + SetDB.tblTransaction.TABLE_NAME + "(" +
                     SetDB.tblTransaction.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     SetDB.tblTransaction.COL_NAME + " VARCHAR(50)," +
@@ -45,22 +57,6 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
                     SetDB.tblExpenseType.COL_VALUE + " INTEGER)"
 
             db?.execSQL(createExpenseTypeTable)
-
-            insertExpenseType(ExpenseType.FOOD)
-            insertExpenseType(ExpenseType.ENTERTAINMENT)
-            insertExpenseType(ExpenseType.SERVICES)
-            insertExpenseType(ExpenseType.INVESTMENT)
-
-            val createUserDataTable:String =  "CREATE TABLE " + SetDB.tblUserData.TABLE_NAME + "(" +
-                    SetDB.tblUserData.COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    SetDB.tblUserData.COL_NAME + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_LAST_NAME + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_USERNAME + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_EMAIL + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_TOKEN + " VARCHAR(50)," +
-                    SetDB.tblUserData.COL_IMG + "BLOB)"
-
-            db?.execSQL(createUserDataTable)
 
             Log.e("ENTRO","CREO TABLAS")
 
@@ -579,6 +575,7 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         values.put(SetDB.tblUserData.COL_EMAIL, user.email)
         values.put(SetDB.tblUserData.COL_TOKEN, user.token)
         values.put(SetDB.tblUserData.COL_IMG, user.imgArray)
+        values.put(SetDB.tblUserData.COL_CLOUD_ID, user.cloudId)
 
         try {
             val result =  dataBase.insert(SetDB.tblUserData.TABLE_NAME, null, values)
@@ -611,9 +608,10 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             SetDB.tblUserData.COL_USERNAME,
             SetDB.tblUserData.COL_EMAIL,
             SetDB.tblUserData.COL_TOKEN,
-            SetDB.tblUserData.COL_IMG)
+            SetDB.tblUserData.COL_IMG,
+            SetDB.tblUserData.COL_CLOUD_ID)
 
-        val where:String =  SetDB.tblUserData.COL_ID + "= ${intID.toString()}"
+        val where:String =  SetDB.tblUserData.COL_ID + " = ${intID.toString()}"
 
         val data =  dataBase.query(SetDB.tblUserData.TABLE_NAME,
             columns,
@@ -631,7 +629,8 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
             var userName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_USERNAME)).toString()
             var email = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_EMAIL)).toString()
             var image = data.getBlob(data.getColumnIndex(SetDB.tblUserData.COL_IMG))
-            user = User(token, fullName, lastName, userName, email, image, idDB)
+            var cloudId = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_CLOUD_ID)).toInt()
+            user = User(token, fullName, lastName, userName, email, image, idDB, cloudId)
 
         }
 
@@ -639,7 +638,52 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         return user
     }
 
-    public fun updateProfile(user: User):Boolean{
+    public fun getListOfUserData():MutableList<User>{
+        val List:MutableList<User> = ArrayList()
+
+        val dataBase:SQLiteDatabase = this.writableDatabase
+
+        //QUE COLUMNAS QUEREMOS QUE ESTE EN EL SELECT
+        val columns:Array<String> =  arrayOf(SetDB.tblUserData.COL_ID,
+            SetDB.tblUserData.COL_NAME,
+            SetDB.tblUserData.COL_LAST_NAME,
+            SetDB.tblUserData.COL_USERNAME,
+            SetDB.tblUserData.COL_EMAIL,
+            SetDB.tblUserData.COL_TOKEN,
+            SetDB.tblUserData.COL_IMG,
+            SetDB.tblUserData.COL_CLOUD_ID)
+
+        val data =  dataBase.query(SetDB.tblUserData.TABLE_NAME,
+            columns,
+            null,
+            null,
+            null,
+            null,
+            SetDB.tblTransaction.COL_ID + " ASC")
+
+        // SI NO TIENE DATOS DEVUELVE FALSO
+        //SE MUEVE A LA PRIMERA POSICION DE LOS DATOS
+        if(data.moveToFirst()){
+
+            do{
+                var idDB = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_ID)).toInt()
+                var fullName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_NAME)).toString()
+                var lastName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_LAST_NAME)).toString()
+                var userName = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_USERNAME)).toString()
+                var email = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_EMAIL)).toString()
+                var token = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_TOKEN)).toString()
+                var image = data.getBlob(data.getColumnIndex(SetDB.tblUserData.COL_IMG))
+                var cloudId = data.getString(data.getColumnIndex(SetDB.tblUserData.COL_CLOUD_ID)).toInt()
+                val user = User(token, fullName, lastName, userName, email, image, idDB, cloudId)
+
+                List.add(user)
+            }while (data.moveToNext())
+
+        }
+        return  List
+    }
+
+    public fun updateUser(user: User):Boolean{
 
         val dataBase:SQLiteDatabase = this.writableDatabase
         val values: ContentValues = ContentValues()
@@ -649,7 +693,9 @@ class DataDbHelper(var context: Context): SQLiteOpenHelper(context, SetDB.DB_NAM
         values.put(SetDB.tblUserData.COL_LAST_NAME, user.lastName)
         values.put(SetDB.tblUserData.COL_USERNAME, user.username)
         values.put(SetDB.tblUserData.COL_EMAIL, user.email)
-        values.put(SetDB.tblUserData.COL_TOKEN, user.imgArray)
+        values.put(SetDB.tblUserData.COL_TOKEN, user.token)
+        values.put(SetDB.tblUserData.COL_IMG, user.imgArray)
+        values.put(SetDB.tblUserData.COL_CLOUD_ID, user.cloudId)
 
         val where:String = SetDB.tblUserData.COL_ID + "=?"
 

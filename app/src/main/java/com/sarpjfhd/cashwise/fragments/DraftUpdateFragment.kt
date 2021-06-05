@@ -1,6 +1,5 @@
 package com.sarpjfhd.cashwise.fragments
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,21 +13,19 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
-import com.sarpjfhd.cashwise.data.DataDbHelper
 import com.sarpjfhd.cashwise.models.Profile
 import com.sarpjfhd.cashwise.models.RestEngine
 import com.sarpjfhd.cashwise.models.Service
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import top.defaults.colorpicker.ColorPickerPopup
 import top.defaults.colorpicker.ColorPickerPopup.ColorPickerObserver
-import java.time.LocalDate
 
 class DraftUpdateFragment : Fragment() {
     private lateinit var editName: EditText
@@ -36,6 +33,7 @@ class DraftUpdateFragment : Fragment() {
     private lateinit var buttonCancel: Button
     private lateinit var buttonCreatePr: Button
     private lateinit var buttonSaveDraft: Button
+    private lateinit var buttonDeleteDraft: Button
     private lateinit var viewColor: View
     private lateinit var colorPicker: ColorPickerPopup
     private lateinit var radio7: RadioButton
@@ -64,7 +62,8 @@ class DraftUpdateFragment : Fragment() {
         editDescription = view.findViewById(R.id.editDescripcionD)
         buttonCancel = view.findViewById(R.id.buttonCancelD)
         buttonCreatePr = view.findViewById(R.id.buttonCreatePrD)
-        buttonSaveDraft = view.findViewById(R.id.buttonSaveDraft)
+        buttonSaveDraft = view.findViewById(R.id.buttonDeleteDraft)
+        buttonDeleteDraft = view.findViewById(R.id.buttonDeleteProfile)
         viewColor = view.findViewById(R.id.viewColorD)
         radio7 = view.findViewById(R.id.radio7diasD)
         radio15 = view.findViewById(R.id.radio15diasD)
@@ -163,6 +162,12 @@ class DraftUpdateFragment : Fragment() {
             radio30.isChecked = false
             radio7.isChecked = false
         }
+
+        buttonDeleteDraft.setOnClickListener {
+            UserApplication.dbHelper.deleteProfile(profile.idBD)
+            findNavController().navigateUp()
+            setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
+        }
     }
 
     override fun onDestroy() {
@@ -176,15 +181,15 @@ class DraftUpdateFragment : Fragment() {
 
     private fun uploadProfile(profile: Profile){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Boolean> = service.createProfile(profile)
+        val result: Call<ResponseBody> = service.createProfile(profile)
 
-        result.enqueue(object: Callback<Boolean>{
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+        result.enqueue(object: Callback<ResponseBody>{
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.body()!!) {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.body()!! != null) {
                     Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
                     UserApplication.dbHelper.deleteProfile(viewModel.profileId)
                 } else {

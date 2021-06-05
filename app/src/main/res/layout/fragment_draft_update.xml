@@ -156,7 +156,19 @@
             app:layout_constraintTop_toBottomOf="@+id/buttonCreatePrD" />
 
         <Button
-            android:id="@+id/buttonSaveDraft"
+            android:id="@+id/buttonDeleteDraft"
+            android:layout_width="129dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/empty_button"
+            android:fontFamily="@font/blogger_sans"
+            android:text="Eliminar   Borrador"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@+id/buttonSaveDraft2"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSaveDraft2" />
+
+        <Button
+            android:id="@+id/buttonSaveDraft2"
             android:layout_width="129dp"
             android:layout_height="56dp"
             android:layout_marginStart="50dp"

@@ -28,7 +28,12 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
     private var profileAdapter:ProfileRecyclerAdapter? = null
     private var context2: Context? = null
     private lateinit var floatingButtonCreate: FloatingActionButton
+    lateinit var rcListProfile: RecyclerView
     private val viewModel: MainViewModel by activityViewModels()
+
+
+
+    val self = this
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -44,17 +49,7 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_profiles, container, false)
 
-        val rcListProfile:RecyclerView = root.findViewById<RecyclerView>(R.id.recyclerView)
 
-        val self = this
-
-        getProfiles(object : ServiceCallback {
-            override fun onSuccess(result: MutableList<Profile>) {
-                rcListProfile.layoutManager = LinearLayoutManager(context2!!)
-                profileAdapter = ProfileRecyclerAdapter(context2!!, UserApplication.dbHelper.getListOfProfiles(), self, false)
-                rcListProfile.adapter = profileAdapter
-            }
-        })
 
         return root
     }
@@ -62,6 +57,14 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         floatingButtonCreate = view.findViewById(R.id.floatingActionButtonCreateProfile)
+        rcListProfile = view.findViewById<RecyclerView>(R.id.recyclerView)
+        getProfiles(object : ServiceCallback {
+            override fun onSuccess(result: MutableList<Profile>) {
+                rcListProfile.layoutManager = LinearLayoutManager(context)
+                profileAdapter = ProfileRecyclerAdapter(requireContext(), result, self, false)
+                rcListProfile.adapter = profileAdapter
+            }
+        })
 
         floatingButtonCreate.setOnClickListener {
             val action = HomeFragmentDirections.actionHomeFragmentToCreateProfileFragment()
@@ -77,11 +80,13 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
 
     private fun getProfiles(apiServiceInterface: ServiceCallback){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<List<Profile>> = service.getProfiles()
+        val user = UserApplication.dbHelper.getUserData(viewModel.userId)!!
+        user.imgArray = ByteArray(0)
+        val result: Call<List<Profile>> = service.getProfiles(user)
 
         result.enqueue(object: Callback<List<Profile>>{
             override fun onFailure(call: Call<List<Profile>>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error obteniendo los mensajes", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Error obteniendo los mensajes: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
             override fun onResponse(call: Call<List<Profile>>, response: Response<List<Profile>>) {

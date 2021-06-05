@@ -9,16 +9,20 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
-import com.sarpjfhd.cashwise.models.ExpenseType
-import com.sarpjfhd.cashwise.models.Transaction
-import com.sarpjfhd.cashwise.models.TransactionFactory
-import com.sarpjfhd.cashwise.models.TransactionTypes
+import com.sarpjfhd.cashwise.models.*
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -31,6 +35,12 @@ class CreateTransactionFragment : Fragment() {
     private lateinit var editAmount: EditText
     private lateinit var editDescription: EditText
     private val viewModel: MainViewModel by activityViewModels()
+
+    companion object {
+        const val REQUEST_KEY_SAVED = "REQUEST_KEY_SAVED"
+        const val BUNDLE_KEY_SAVED = "BUNDLE_KEY_SAVED"
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -60,6 +70,13 @@ class CreateTransactionFragment : Fragment() {
             val transactionType: TransactionTypes = TransactionTypes.fromInt(spinnerIndex)!!
             val expenseType: ExpenseType = ExpenseType.fromInt(spinnerExIndex)!!
             val profileId: Int = viewModel.profileId
+            val tdata = TransactionData()
+            tdata.name = name
+            tdata.description = description
+            tdata.profileId = profileId
+            tdata.amount = amount
+            tdata.expenseType = expenseType
+            tdata.transactionType = transactionType
             when (transactionType) {
                 TransactionTypes.EXPENSE -> {
                     val expense = TransactionFactory.createExpense(transactionType, name, amount, LocalDate.now(), expenseType, description, UserApplication.dbHelper.getProfile(profileId))
@@ -70,7 +87,33 @@ class CreateTransactionFragment : Fragment() {
                     UserApplication.dbHelper.insertIngress(ingress, profileId)
                 }
             }
+            uploadTransaction(tdata)
             findNavController().navigateUp()
         }
+    }
+
+    private fun uploadTransaction(transactionData: TransactionData){
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<ResponseBody> = service.createTransaction(transactionData)
+
+        result.enqueue(object: Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.body() == null) {
+                    Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
+                    findNavController().navigateUp()
+                    setFragmentResult(
+                        DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
+                            DraftUpdateFragment.BUNDLE_KEY_SAVED to transactionData.idBD)
+                    )
+                }
+            }
+
+        })
     }
 }

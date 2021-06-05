@@ -1,9 +1,12 @@
 package com.sarpjfhd.cashwise.models
 
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+
 
 class RestEngine {
     companion object{
@@ -11,10 +14,15 @@ class RestEngine {
             val interceptor = HttpLoggingInterceptor()
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
+            val gson = GsonBuilder()
+                .setLenient()
+                .registerTypeAdapter(LocalDate::class.java, LocalDateTypeAdapter().nullSafe())
+                .create()
+
             val client =  OkHttpClient.Builder().addInterceptor(interceptor).build()
             val retrofit =  Retrofit.Builder()
                     .baseUrl(ServerData.serverUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(client)
                     .build()
 

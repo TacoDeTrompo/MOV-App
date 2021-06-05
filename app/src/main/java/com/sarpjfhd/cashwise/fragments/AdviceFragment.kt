@@ -19,6 +19,7 @@ import com.sarpjfhd.cashwise.models.Service
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class AdviceFragment : Fragment() {
     private lateinit var adviceAdapter: AdviceRecyclerAdapter
@@ -39,7 +40,7 @@ class AdviceFragment : Fragment() {
             override fun onSuccess(result: MutableList<Advice>) {
                 val rcListAdvice: RecyclerView = view.findViewById<RecyclerView>(R.id.recyclerView2)
                 rcListAdvice.layoutManager = LinearLayoutManager(requireContext())
-                adviceAdapter = AdviceRecyclerAdapter(requireContext(), arrayListOf())
+                adviceAdapter = AdviceRecyclerAdapter(requireContext(), result)
                 rcListAdvice.adapter = adviceAdapter
             }
         })
@@ -56,8 +57,17 @@ class AdviceFragment : Fragment() {
 
             override fun onResponse(call: Call<List<Advice>>, response: Response<List<Advice>>) {
                 val arrayItems = response.body()
-                val advices: MutableList<Advice> = arrayItems!!.toMutableList()
-                apiServiceInterface.onSuccess(advices)
+                try {
+                    val advices: MutableList<Advice> = arrayItems!!.toMutableList()
+                    for (item in advices) {
+                        val base64 = item.encodedImage.toString()
+                        val decodedImg = Base64.getDecoder().decode(base64)
+                        item.imgArray = decodedImg
+                    }
+                    apiServiceInterface.onSuccess(advices)
+                } catch (e: NullPointerException) {
+                    Toast.makeText(requireContext(), "Error 500", Toast.LENGTH_LONG).show()
+                }
             }
         })
     }

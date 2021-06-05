@@ -10,8 +10,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
@@ -21,6 +23,8 @@ import com.sarpjfhd.cashwise.data.DataDbHelper
 import com.sarpjfhd.cashwise.models.Profile
 import com.sarpjfhd.cashwise.models.RestEngine
 import com.sarpjfhd.cashwise.models.Service
+import com.sarpjfhd.cashwise.models.User
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,6 +46,12 @@ class CreateProfileFragment : Fragment() {
     private lateinit var radio60: RadioButton
     private lateinit var profile: Profile
     private val viewModel: MainViewModel by activityViewModels()
+
+    companion object {
+        const val REQUEST_KEY_SAVED = "REQUEST_KEY_SAVED"
+        const val BUNDLE_KEY_SAVED = "BUNDLE_KEY_SAVED"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -159,20 +169,25 @@ class CreateProfileFragment : Fragment() {
     }
 
     private fun uploadProfile(profile: Profile){
+        profile.userID = UserApplication.dbHelper.getUserData(viewModel.userId)!!.cloudId
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Boolean> = service.createProfile(profile)
+        val result: Call<ResponseBody> = service.createProfile(profile)
 
-        result.enqueue(object: Callback<Boolean> {
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+        result.enqueue(object: Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (!response.body()!!) {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.body() == null) {
                     Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
                     findNavController().navigateUp()
+                    setFragmentResult(
+                        DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
+                            DraftUpdateFragment.BUNDLE_KEY_SAVED to profile.idBD)
+                    )
                 }
             }
 

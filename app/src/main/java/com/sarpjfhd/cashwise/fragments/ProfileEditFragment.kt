@@ -23,6 +23,7 @@ import com.sarpjfhd.cashwise.data.DataDbHelper
 import com.sarpjfhd.cashwise.models.Profile
 import com.sarpjfhd.cashwise.models.RestEngine
 import com.sarpjfhd.cashwise.models.Service
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -72,30 +73,54 @@ class ProfileEditFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        profile = Profile("", 0, LocalDate.now(), "", "")
+        profile.idBD = viewModel.profileId
+
         getProfile(object: ServiceCallback{
             override fun onSuccess(result: Profile) {
                 profile = result
+                editName.setText(profile.profileName)
+                editDescription.setText(profile.descrption)
+                when (profile.dayRange){
+                    7-> {
+                        radio7.isChecked = true
+                    }
+                    15-> {
+                        radio15.isChecked = true
+                    }
+                    30-> {
+                        radio30.isChecked = true
+                    }
+                    60-> {
+                        radio60.isChecked = true
+                    }
+                }
+                viewColor.setBackgroundColor(profile.color.toInt())
             }
 
-        }, viewModel.profileId)
+        }, viewModel.profileId, profile)
 
-        editName.setText(profile.profileName)
-        editDescription.setText(profile.descrption)
-        when (profile.dayRange){
-            7-> {
-                radio7.isChecked = true
-            }
-            15-> {
-                radio15.isChecked = true
-            }
-            30-> {
-                radio30.isChecked = true
-            }
-            60-> {
-                radio60.isChecked = true
-            }
-        }
+
         buttonSaveDraft.setOnClickListener {
+            val name: String = editName.text.toString()
+            val description: String = editDescription.text.toString()
+            var dayRange: Int = 0
+            if (radio7.isChecked) {
+                dayRange = 7
+            } else if (radio15.isChecked) {
+                dayRange = 15
+            } else if (radio30.isChecked) {
+                dayRange = 30
+            } else if (radio60.isChecked) {
+                dayRange = 60
+            }
+            val color: Int = (viewColor.background as ColorDrawable).color
+            if (dayRange != 0) {
+                profile.profileName = name
+                profile.descrption = description
+                profile.dayRange = dayRange
+                profile.color = color.toString()
+            }
             uploadProfile(object: ServiceCallbackPOST {
                 override fun onSuccess(result: Boolean) {
                     findNavController().navigateUp()
@@ -104,7 +129,7 @@ class ProfileEditFragment : Fragment() {
 
             } ,profile)
         }
-        viewColor.setBackgroundColor(profile.color.toInt())
+
         viewColor.setOnClickListener {
             var observer = object: ColorPickerObserver() {
                 override fun onColorPicked(color: Int) {
@@ -161,17 +186,17 @@ class ProfileEditFragment : Fragment() {
 
     private fun uploadProfile(serviceCallback: ServiceCallbackPOST,profile: Profile){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Boolean> = service.updateProfile(profile)
+        val result: Call<ResponseBody> = service.updateProfile(profile)
 
-        result.enqueue(object: Callback<Boolean>{
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+        result.enqueue(object: Callback<ResponseBody>{
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.body()!!) {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.body() != null) {
                     Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
-                    serviceCallback.onSuccess(response.body()!!)
+                    serviceCallback.onSuccess(true)
                 } else {
                     Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
                 }
@@ -180,9 +205,9 @@ class ProfileEditFragment : Fragment() {
         })
     }
 
-    private fun getProfile(apiServiceInterface: ServiceCallback, profileId: Int){
+    private fun getProfile(apiServiceInterface: ServiceCallback, profileId: Int, profile: Profile){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Profile> = service.getProfile(profileId)
+        val result: Call<Profile> = service.getProfile(profile)
 
         result.enqueue(object: Callback<Profile>{
             override fun onFailure(call: Call<Profile>, t: Throwable) {

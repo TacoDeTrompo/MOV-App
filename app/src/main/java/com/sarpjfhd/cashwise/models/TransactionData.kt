@@ -1,11 +1,9 @@
 package com.sarpjfhd.cashwise.models
 
-import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import java.math.BigDecimal
-import java.time.LocalDate
 
-open class Transaction {
+class TransactionData {
     @SerializedName("profileId")
     var profileId: Int = 0
     @SerializedName("idBD")
@@ -16,18 +14,8 @@ open class Transaction {
     var transactionType: TransactionTypes = TransactionTypes.INGRESS
     @SerializedName("amount")
     var amount: BigDecimal = BigDecimal.ZERO
-        get() = field
-        set(value) {
-            field = value
-        }
-    var transactionDate = LocalDate.now()
-        get() = field
-        set(value) {
-            field = value
-        }
-    var parentProfile: Profile = Profile("", 0, LocalDate.now(), "", "")
-        get() = field
-        set(value) {
-            field = value
-        }
+    @SerializedName("description")
+    var description: String = ""
+    @SerializedName("expenseType")
+    var expenseType: ExpenseType = ExpenseType.INVESTMENT
 }

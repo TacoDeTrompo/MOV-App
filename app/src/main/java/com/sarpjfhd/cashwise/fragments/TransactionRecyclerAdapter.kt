@@ -116,11 +116,27 @@ class TransactionRecyclerAdapter(
             moveInterface.onUpdateClick()
         }
         holder.btnDelete.setOnClickListener {
-            moveInterface.onDeleteClick(transaction.idBD)
+            moveInterface.onDeleteClick(transaction.idBD, arrayListOf(), position)
         }
     }
 
     override fun getFilter(): Filter {
         TODO("Not yet implemented")
+    }
+
+    fun deleteItem(position: Int) {
+        var transactions: MutableList<Transaction>
+        when (isExpense) {
+            true -> {
+                expense.removeAt(position)
+                transactions = expense.toMutableList()
+            }
+            false -> {
+                ingress.removeAt(position)
+                transactions = ingress.toMutableList()
+            }
+        }
+        notifyItemRemoved(position)
+        notifyItemRangeRemoved(position, transactions.size)
     }
 }

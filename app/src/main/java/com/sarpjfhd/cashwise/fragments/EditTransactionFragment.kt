@@ -18,6 +18,7 @@ import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
 import com.sarpjfhd.cashwise.models.*
 import com.sarpjfhd.cashwise.navigateSafe
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,6 +54,8 @@ class EditTransactionFragment : Fragment() {
         buttonReturn.setOnClickListener {
             findNavController().navigateUp()
         }
+        val tdata1 = TransactionData()
+        tdata1.idBD = viewModel.transactionId
         when (viewModel.currentTransactionState){
             true -> {
                 getExpense(object: ServiceCallback {
@@ -68,7 +71,7 @@ class EditTransactionFragment : Fragment() {
                         TODO("Not yet implemented")
                     }
 
-                }, viewModel.transactionId)
+                }, tdata1)
             }
             false -> {
                 getIngress(object: ServiceCallback {
@@ -84,7 +87,7 @@ class EditTransactionFragment : Fragment() {
                         editAmount.setText(result.amount.toString())
                     }
 
-                }, viewModel.transactionId)
+                }, tdata1)
             }
         }
         buttonSave.setOnClickListener {
@@ -114,12 +117,12 @@ class EditTransactionFragment : Fragment() {
             val transactionType: TransactionTypes = TransactionTypes.fromInt(spinnerIndex)!!
             val expenseType: ExpenseType = ExpenseType.fromInt(spinnerExIndex)!!
             val profileId: Int = viewModel.profileId
-            when (transactionType) {
+            val tdata = TransactionData()
+            /*when (transactionType) {
                 TransactionTypes.EXPENSE -> {
                     val expense = TransactionFactory.createExpense(transactionType, name, amount, LocalDate.now(), expenseType, description, UserApplication.dbHelper.getProfile(profileId))
                     updateExpense(object: ServiceCallbackPOST {
                         override fun onSuccess(result: Boolean) {
-                            TODO("Not yet implemented")
                         }
                     }, expense)
                 }
@@ -127,28 +130,38 @@ class EditTransactionFragment : Fragment() {
                     val ingress = TransactionFactory.createIngress(transactionType, name, amount, LocalDate.now(), expenseType, description, UserApplication.dbHelper.getProfile(profileId))
                     updateIngress(object: ServiceCallbackPOST{
                         override fun onSuccess(result: Boolean) {
-                            TODO("Not yet implemented")
                         }
                     }, ingress)
                 }
-            }
+            }*/
+            tdata.name = name
+            tdata.description = description
+            tdata.profileId = profileId
+            tdata.amount = amount
+            tdata.expenseType = expenseType
+            tdata.transactionType = transactionType
+            updateTransaction(object: ServiceCallbackPOST{
+                override fun onSuccess(result: Boolean) {
+
+                }
+            }, tdata)
             findNavController().navigateUp()
         }
     }
 
-    private fun updateExpense(serviceCallback: ServiceCallbackPOST,expense: Expense){
+    private fun updateTransaction(serviceCallback: ServiceCallbackPOST, transactionData: TransactionData){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Boolean> = service.updateExpense(expense)
+        val result: Call<ResponseBody> = service.updateTransaction(transactionData)
 
-        result.enqueue(object: Callback<Boolean> {
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+        result.enqueue(object: Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.body()!!) {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.body() != null) {
                     Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
-                    serviceCallback.onSuccess(response.body()!!)
+                    serviceCallback.onSuccess(true)
                 } else {
                     Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
                 }
@@ -178,9 +191,9 @@ class EditTransactionFragment : Fragment() {
         })
     }
 
-    private fun getExpense(apiServiceInterface: ServiceCallback, expenseId: Int){
+    private fun getExpense(apiServiceInterface: ServiceCallback, transactionData: TransactionData){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Expense> = service.getExpenses(expenseId)
+        val result: Call<Expense> = service.getExpenses(transactionData)
 
         result.enqueue(object: Callback<Expense> {
             override fun onFailure(call: Call<Expense>, t: Throwable) {
@@ -194,9 +207,9 @@ class EditTransactionFragment : Fragment() {
         })
     }
 
-    private fun getIngress(apiServiceInterface: ServiceCallback, ingressId: Int){
+    private fun getIngress(apiServiceInterface: ServiceCallback, transactionData: TransactionData){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
-        val result: Call<Ingress> = service.getIngress(ingressId)
+        val result: Call<Ingress> = service.getIngress(transactionData)
 
         result.enqueue(object: Callback<Ingress> {
             override fun onFailure(call: Call<Ingress>, t: Throwable) {
