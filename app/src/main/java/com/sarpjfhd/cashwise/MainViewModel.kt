@@ -9,5 +9,5 @@ class MainViewModel: ViewModel() {
     var profileId: Int = 0
     var transactionId: Int = 0
     var currentTransactionState: Boolean = true //isExpense
-    var userId: Int = 2
+    var userId: Int = 1
 }
