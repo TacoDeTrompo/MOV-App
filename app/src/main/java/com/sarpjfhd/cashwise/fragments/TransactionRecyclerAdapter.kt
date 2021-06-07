@@ -9,6 +9,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.models.Expense
@@ -47,11 +48,11 @@ class TransactionRecyclerAdapter(
                     btnUpdate = itemView?.findViewById<ImageButton>(R.id.imageBupdate)
                 }
                 false -> {
-                    txtName = itemView?.findViewById<TextView>(R.id.textTranName)
-                    txtDescription = itemView?.findViewById<TextView>(R.id.textTrDescripcion)
-                    txtAmount = itemView?.findViewById<TextView>(R.id.textTrAmount)
-                    btnDelete = itemView?.findViewById<ImageButton>(R.id.imageBdelete)
-                    btnUpdate = itemView?.findViewById<ImageButton>(R.id.imageBupdate)
+                    txtName = itemView?.findViewById<TextView>(R.id.textTranNameIn)
+                    txtDescription = itemView?.findViewById<TextView>(R.id.textTrDescripcionIn)
+                    txtAmount = itemView?.findViewById<TextView>(R.id.textTrAmountIn)
+                    btnDelete = itemView?.findViewById<ImageButton>(R.id.imageBdeleteIn)
+                    btnUpdate = itemView?.findViewById<ImageButton>(R.id.imageBupdateIn)
                 }
             }
             itemView.setOnClickListener(this)
@@ -88,6 +89,7 @@ class TransactionRecyclerAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val transaction: Transaction
+        var transId: Int
         when (isExpense) {
             true -> {
                 val expense = expense[position]
@@ -102,6 +104,7 @@ class TransactionRecyclerAdapter(
                     ExpenseType.INVESTMENT -> holder.txtType.text = "Inversion"
                 }
                 transaction = expense
+                transId = expense.idBD
             }
             false -> {
                 val ingress = ingress[position]
@@ -110,10 +113,11 @@ class TransactionRecyclerAdapter(
                 val total = "$${ingress.amount.toString()}"
                 holder.txtAmount.text = total
                 transaction = ingress
+                transId = ingress.idBD
             }
         }
         holder.btnUpdate.setOnClickListener {
-            moveInterface.onUpdateClick()
+            moveInterface.onUpdateClick(isExpense, transId)
         }
         holder.btnDelete.setOnClickListener {
             moveInterface.onDeleteClick(transaction.idBD, arrayListOf(), position)

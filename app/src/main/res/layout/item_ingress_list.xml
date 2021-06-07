@@ -46,12 +46,12 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/textTrAmount"
+                app:layout_constraintEnd_toStartOf="@+id/textTrAmountIn"
                 app:layout_constraintStart_toStartOf="@+id/textTranNameIn"
                 app:layout_constraintTop_toBottomOf="@+id/textTranNameIn" />
 
             <TextView
-                android:id="@+id/textTrAmount"
+                android:id="@+id/textTrAmountIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -82,7 +82,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="#00FFFFFF"
                 app:tint="#000000"
-                app:layout_constraintBottom_toTopOf="@+id/textTrAmount"
+                app:layout_constraintBottom_toTopOf="@+id/textTrAmountIn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageBdeleteIn"
                 app:srcCompat="@drawable/ic_baseline_create_24" />

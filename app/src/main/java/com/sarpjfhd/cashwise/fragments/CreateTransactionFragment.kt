@@ -105,7 +105,7 @@ class CreateTransactionFragment : Fragment() {
                 if (response.body() == null) {
                     Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
                     findNavController().navigateUp()
                     setFragmentResult(
                         DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
@@ -113,7 +113,6 @@ class CreateTransactionFragment : Fragment() {
                     )
                 }
             }
-
         })
     }
 }

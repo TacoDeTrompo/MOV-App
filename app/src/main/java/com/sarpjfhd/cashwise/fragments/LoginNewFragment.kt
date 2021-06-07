@@ -31,7 +31,6 @@ class LoginNewFragment : Fragment() {
     private lateinit var buttonSignup: Button
     private lateinit var buttonLogIn: Button
     private val viewModel: MainViewModel by activityViewModels()
-    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +58,8 @@ class LoginNewFragment : Fragment() {
                     result.imgArray = decodedImg
                     if (UserApplication.dbHelper.insertUserData(result)) {
                         val users = UserApplication.dbHelper.getListOfUserData()
-                        //sharedPref!!.edit().putInt("USER_ID", users[0].idDB).apply()
+                        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                        sharedPref!!.edit().putInt("USER_ID", users[0].idDB).apply()
                         viewModel.userId = users[0].idDB
                         val action = LoginNewFragmentDirections.actionLoginNewFragmentToHomeFragment()
                         findNavController().navigateSafe(action)

@@ -90,50 +90,42 @@ class ProfileFragment : Fragment() {
                 txtDescription.text = profile?.descrption
             }
         }, viewModel.profileId, profile)
-        /*getExpenses(object: ServiceCallbackExpenses{
+        getExpenses(object: ServiceCallbackExpenses{
             override fun onSuccess(result: MutableList<Expense>) {
                 for (item in result) {
                     exList.add(item)
                 }
                 expensesFragment = TransactionListFragment(exList, arrayListOf(), true)
+                getIngresses(object: ServiceCallbackIngresses{
+                    override fun onSuccess(result: MutableList<Ingress>) {
+                        for (item in result) {
+                            list.add(item)
+                        }
+                        ingressesFragment = TransactionListFragment(arrayListOf(), list, false)
+                        transactionAdapter = TransactionPagerAdapater(requireActivity().supportFragmentManager, lifecycle, expensesFragment!!, ingressesFragment!!)
+                        pager.adapter = transactionAdapter
+                        //pager.offscreenPageLimit = 2
+                        val tabLayoutMediator =  TabLayoutMediator(tabLayout, pager
+                            , TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                                when(position){
+                                    0-> {
+                                        tab.text =  "Gastos"
+                                    }
+                                    1-> {
+                                        tab.text =  "Ingresos"
+                                    }
+                                }
+                            })
+                        tabLayoutMediator.attach()
+                    }
+                }, viewModel.profileId)
             }
         }, viewModel.profileId)
-        getIngresses(object: ServiceCallbackIngresses{
-            override fun onSuccess(result: MutableList<Ingress>) {
-                for (item in result) {
-                    list.add(item)
-                }
-                ingressesFragment = TransactionListFragment(arrayListOf(), list, false)
+        getTotalTransaction(object: ServiceCallbackAmount {
+            override fun onSuccess(result: AmountData) {
+                txtTotalAmount.text = "$${result.amount}"
             }
-        }, viewModel.profileId)*/
-        /*while (expensesFragment == null && ingressesFragment == null) {
-        }
-        transactionAdapter = TransactionPagerAdapater(requireActivity().supportFragmentManager, lifecycle, expensesFragment!!, ingressesFragment!!)
-        pager.adapter = transactionAdapter*/
-
-        /*val tabLayoutMediator =  TabLayoutMediator(tabLayout, pager
-            , TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                when(position){
-                    0-> {
-                        tab.text =  "Gastos"
-                    }
-                    1-> {
-                        tab.text =  "Ingresos"
-                    }
-                }
-            })
-        tabLayoutMediator.attach()
-
-        var amount: BigDecimal = BigDecimal(0)
-        var expenses: BigDecimal = BigDecimal(0)
-        for (ingress in list) {
-            amount += ingress.amount
-        }
-        for (expense in exList) {
-            expenses += expense.amount
-        }
-        var total = amount - expenses
-        txtTotalAmount.text = "Total: $${total.toString()}"*/
+        }, viewModel.profileId)
 
         buttonAddTransaction.setOnClickListener {
             val action = ProfileFragmentDirections.actionProfileFragmentToCreateTransactionFragment()
@@ -170,37 +162,42 @@ class ProfileFragment : Fragment() {
                 txtDescription.text = result?.descrption
             }
         }, viewModel.profileId, profile)
-        /*getExpenses(object: ServiceCallbackExpenses{
+        getExpenses(object: ServiceCallbackExpenses{
             override fun onSuccess(result: MutableList<Expense>) {
                 for (item in result) {
                     exList.add(item)
                 }
                 expensesFragment = TransactionListFragment(exList, arrayListOf(), true)
+                getIngresses(object: ServiceCallbackIngresses{
+                    override fun onSuccess(result: MutableList<Ingress>) {
+                        for (item in result) {
+                            list.add(item)
+                        }
+                        ingressesFragment = TransactionListFragment(arrayListOf(), list, false)
+                        transactionAdapter = TransactionPagerAdapater(requireActivity().supportFragmentManager, lifecycle, expensesFragment!!, ingressesFragment!!)
+                        pager.adapter = transactionAdapter
+                        //pager.offscreenPageLimit = 2
+                        val tabLayoutMediator =  TabLayoutMediator(tabLayout, pager
+                            , TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                                when(position){
+                                    0-> {
+                                        tab.text =  "Gastos"
+                                    }
+                                    1-> {
+                                        tab.text =  "Ingresos"
+                                    }
+                                }
+                            })
+                        tabLayoutMediator.attach()
+                    }
+                }, viewModel.profileId)
             }
         }, viewModel.profileId)
-        getIngresses(object: ServiceCallbackIngresses{
-            override fun onSuccess(result: MutableList<Ingress>) {
-                for (item in result) {
-                    list.add(item)
-                }
-                ingressesFragment = TransactionListFragment(arrayListOf(), list, false)
+        getTotalTransaction(object: ServiceCallbackAmount {
+            override fun onSuccess(result: AmountData) {
+                txtTotalAmount.text = "$${result.amount}"
             }
-        }, viewModel.profileId)*/
-       /*while (expensesFragment == null && ingressesFragment == null) {
-        }
-        transactionAdapter = TransactionPagerAdapater(requireActivity().supportFragmentManager, lifecycle, expensesFragment!!, ingressesFragment!!)
-        pager.adapter = transactionAdapter
-
-        var amount: BigDecimal = BigDecimal(0)
-        var expenses: BigDecimal = BigDecimal(0)
-        for (ingress in list) {
-            amount += ingress.amount
-        }
-        for (expense in exList) {
-            expenses += expense.amount
-        }
-        var total = amount - expenses*/
-        //txtTotalAmount.text = "Total: $${total.toString()}"
+        }, viewModel.profileId)
     }
 
 
@@ -274,6 +271,26 @@ class ProfileFragment : Fragment() {
         })
     }
 
+    fun getTotalTransaction(apiServiceInterface: ServiceCallbackAmount, profileId: Int) {
+        val profile = Profile("", 0, LocalDate.now(), "", "")
+        profile.idBD = profileId
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<AmountData> = service.getTotalTransaction(profile)
+
+        result.enqueue(object: Callback<AmountData> {
+            override fun onFailure(call: Call<AmountData>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<AmountData>, response: Response<AmountData>) {
+                val amountData = response.body()
+                if (amountData != null) {
+                    apiServiceInterface.onSuccess(amountData)
+                }
+            }
+        })
+    }
+
     public interface ServiceCallbackProfile {
         fun onSuccess(result: Profile)
     }
@@ -282,6 +299,9 @@ class ProfileFragment : Fragment() {
     }
     public interface ServiceCallbackIngresses {
         fun onSuccess(result: MutableList<Ingress>)
+    }
+    public interface ServiceCallbackAmount {
+        fun onSuccess(result: AmountData)
     }
     public interface ServiceCallback {
         fun onSuccess(result: Boolean)

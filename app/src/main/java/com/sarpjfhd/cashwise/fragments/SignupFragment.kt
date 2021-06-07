@@ -1,6 +1,7 @@
 package com.sarpjfhd.cashwise.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -116,19 +117,23 @@ class SignupFragment : Fragment() {
                 0,
                 0
             )
-            signUp(object : ServiceCallback {
-                override fun onSuccess(result: User) {
-                    val base64 = result.encodedImage
-                    val decodedImg = Base64.getDecoder().decode(base64)
-                    result.imgArray = decodedImg
-                    if (UserApplication.dbHelper.insertUserData(result)) {
-                        val users = UserApplication.dbHelper.getListOfUserData()
-                        viewModel.userId = users[0].idDB
-                        val action = SignupFragmentDirections.actionSignupFragmentToHomeFragment()
-                        findNavController().navigateSafe(action)
+            if (editPassword.text.toString() == editPasswordR.text.toString()){
+                signUp(object : ServiceCallback {
+                    override fun onSuccess(result: User) {
+                        val base64 = result.encodedImage
+                        val decodedImg = Base64.getDecoder().decode(base64)
+                        result.imgArray = decodedImg
+                        if (UserApplication.dbHelper.insertUserData(result)) {
+                            val users = UserApplication.dbHelper.getListOfUserData()
+                            viewModel.userId = users[0].idDB
+                            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+                            sharedPref!!.edit().putInt("USER_ID", users[0].idDB).apply()
+                            val action = SignupFragmentDirections.actionSignupFragmentToHomeFragment()
+                            findNavController().navigateSafe(action)
+                        }
                     }
-                }
-            }, user)
+                }, user)
+            }
         }
     }
 

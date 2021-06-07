@@ -22,7 +22,7 @@ class TransactionPagerAdapater(
     }
 
     //cuantos fragments va a tener el swipe
-    override fun getItemCount(): Int = 4
+    override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
         //Vamos a crear el fragmente

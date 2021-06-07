@@ -7,6 +7,7 @@ import java.time.LocalDate
 class Expense(name: String, amount: BigDecimal, transactionDate: LocalDate, type: ExpenseType?, description: String, parentProfile: Profile?, transactionType: TransactionTypes): Transaction() {
     @SerializedName("description")
     var description: String = ""
+    @SerializedName("expenseType")
     var type: ExpenseType = ExpenseType.FOOD
     init {
         @SerializedName("name")

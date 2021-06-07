@@ -93,6 +93,7 @@ class ProfileRecyclerAdapter(val context: Context, var profiles:MutableList<Prof
             }
         }
         holder.cardColor.backgroundTintList = ColorStateList.valueOf(profile.color.toInt())
+        listener.getTotalAmount(profile.idBD, holder.txtTotal)
 
         holder.cardColor.setOnClickListener {
             listener.onCardClickListener(profile.idBD)

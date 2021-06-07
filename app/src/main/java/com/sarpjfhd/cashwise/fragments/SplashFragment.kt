@@ -15,7 +15,6 @@ import com.sarpjfhd.cashwise.navigateSafe
 
 class SplashFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
-    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,7 +26,8 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //navigateToHomeAnyway()
-        //viewModel.userId = sharedPref!!.getInt("USER_ID", 0)
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        viewModel.userId = sharedPref!!.getInt("USER_ID", 0)
         val user = UserApplication.dbHelper.getUserData(viewModel.userId)
         if (user != null) {
             val action = SplashFragmentDirections.actionSplashFragmentToHomeFragment()

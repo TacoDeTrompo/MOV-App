@@ -17,6 +17,8 @@ class RestEngine {
             val gson = GsonBuilder()
                 .setLenient()
                 .registerTypeAdapter(LocalDate::class.java, LocalDateTypeAdapter().nullSafe())
+                .registerTypeAdapter(TransactionTypes::class.java, TransactionTypeAdapter().nullSafe())
+                .registerTypeAdapter(ExpenseType::class.java, ExpenseTypeAdapter().nullSafe())
                 .create()
 
             val client =  OkHttpClient.Builder().addInterceptor(interceptor).build()

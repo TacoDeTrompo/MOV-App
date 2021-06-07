@@ -10,7 +10,7 @@ interface Service {
 
     @Headers("Content-Type: application/json")
     @POST("deleteProfile.php")
-    fun deleteProfile(profile: Profile): Call<ResponseBody>
+    fun deleteProfile(@Body profile: Profile): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("getProfiles.php")
@@ -18,31 +18,31 @@ interface Service {
 
     @Headers("Content-Type: application/json")
     @POST("getExpense.php")
-    fun getExpenses(transactionData: TransactionData): Call<Expense>
+    fun getExpenses(@Body transactionData: TransactionData): Call<Expense>
 
     @Headers("Content-Type: application/json")
     @POST("transactionDelete.php")
-    fun deleteTransaction(transactionData: TransactionData): Call<ResponseBody>
+    fun deleteTransaction(@Body transactionData: TransactionData): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("transactionInsert.php")
-    fun createTransaction(transactionData: TransactionData): Call<ResponseBody>
+    fun createTransaction(@Body transactionData: TransactionData): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("transactionUpdate.php")
-    fun updateTransaction(transactionData: TransactionData): Call<ResponseBody>
+    fun updateTransaction(@Body transactionData: TransactionData): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
     @POST("getIngress.php")
-    fun getIngress(transactionData: TransactionData): Call<Ingress>
+    fun getIngress(@Body transactionData: TransactionData): Call<Ingress>
 
     @Headers("Content-Type: application/json")
     @POST("getExpenses.php")
-    fun getExpensesByProfile(profile: Profile): Call<List<Expense>>
+    fun getExpensesByProfile(@Body profile: Profile): Call<List<Expense>>
 
     @Headers("Content-Type: application/json")
     @POST("getIngresses.php")
-    fun getIngressesById(profile: Profile): Call<List<Ingress>>
+    fun getIngressesById(@Body profile: Profile): Call<List<Ingress>>
 
     @GET("userdata/{id}")
     fun getUserData(@Path("id") id: Int): Call<User>
@@ -92,4 +92,16 @@ interface Service {
     @Headers("Content-Type: application/json")
     @POST("insertAdvices.php")
     fun uploadAdvice(@Body advice: Advice): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST("getAllExpenses.php")
+    fun getTotalExpenses(@Body profile: Profile): Call<AmountData>
+
+    @Headers("Content-Type: application/json")
+    @POST("getAllIngress.php")
+    fun getTotalIngresses(@Body profile: Profile): Call<AmountData>
+
+    @Headers("Content-Type: application/json")
+    @POST("getProfileTotal.php")
+    fun getTotalTransaction(@Body profile: Profile): Call<AmountData>
 }

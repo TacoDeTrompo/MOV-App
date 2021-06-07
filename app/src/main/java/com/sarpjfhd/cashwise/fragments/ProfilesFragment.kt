@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.sarpjfhd.cashwise.MainViewModel
 import com.sarpjfhd.cashwise.R
 import com.sarpjfhd.cashwise.UserApplication
+import com.sarpjfhd.cashwise.models.AmountData
 import com.sarpjfhd.cashwise.models.Profile
 import com.sarpjfhd.cashwise.models.RestEngine
 import com.sarpjfhd.cashwise.models.Service
@@ -23,6 +25,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.create
+import java.math.BigDecimal
+import java.time.LocalDate
 
 class ProfilesFragment : Fragment(), CardOnClickListener {
     private var profileAdapter:ProfileRecyclerAdapter? = null
@@ -78,6 +82,14 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
         findNavController().navigateSafe(action)
     }
 
+    override fun getTotalAmount(profileId: Int, textView: TextView) {
+        getTotalTransaction(object: ProfileFragment.ServiceCallbackAmount{
+            override fun onSuccess(result: AmountData) {
+                textView.text = "$${result.amount}"
+            }
+        }, profileId)
+    }
+
     private fun getProfiles(apiServiceInterface: ServiceCallback){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val user = UserApplication.dbHelper.getUserData(viewModel.userId)!!
@@ -94,6 +106,26 @@ class ProfilesFragment : Fragment(), CardOnClickListener {
                 var profile: Profile
                 val profiles: MutableList<Profile> = arrayItems!!.toMutableList()
                 apiServiceInterface.onSuccess(profiles)
+            }
+        })
+    }
+
+    fun getTotalTransaction(apiServiceInterface: ProfileFragment.ServiceCallbackAmount, profileId: Int) {
+        val profile = Profile("", 0, LocalDate.now(), "", "")
+        profile.idBD = profileId
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<AmountData> = service.getTotalTransaction(profile)
+
+        result.enqueue(object: Callback<AmountData> {
+            override fun onFailure(call: Call<AmountData>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<AmountData>, response: Response<AmountData>) {
+                val amountData = response.body()
+                if (amountData != null) {
+                    apiServiceInterface.onSuccess(amountData)
+                }
             }
         })
     }

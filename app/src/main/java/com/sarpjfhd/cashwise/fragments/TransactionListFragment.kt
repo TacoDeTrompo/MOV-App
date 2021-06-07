@@ -27,42 +27,33 @@ import java.math.BigInteger
 class TransactionListFragment(private var expenses: MutableList<Expense>, private var ingress: MutableList<Ingress>, private var isExpense: Boolean) : Fragment(), MoveToEditTransactionFragment {
     private lateinit var total: TextView
     private var transactionAdapter:TransactionRecyclerAdapter? = null
-    private var context2: Context? = null
     private val viewModel: MainViewModel by activityViewModels()
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        this.context2 =  context
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root =  inflater.inflate(R.layout.fragment_transaction_list, container, false)
-
-        when (isExpense) {
-            true -> {
-                val rcListTransaction: RecyclerView = root.findViewById<RecyclerView>(R.id.recyclerView2)
-                rcListTransaction.layoutManager = LinearLayoutManager(context2!!)
-                transactionAdapter = TransactionRecyclerAdapter(context2!!, expenses, arrayListOf(), true, this)
-                rcListTransaction.adapter = transactionAdapter
-            }
-            false -> {
-                val rcListTransaction: RecyclerView = root.findViewById<RecyclerView>(R.id.recyclerView2)
-                rcListTransaction.layoutManager = LinearLayoutManager(context2!!)
-                transactionAdapter = TransactionRecyclerAdapter(context2!!, arrayListOf(), ingress, false, this)
-                rcListTransaction.adapter = transactionAdapter
-            }
-        }
-
-        return root
+        return inflater.inflate(R.layout.fragment_transaction_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         total = view.findViewById(R.id.textTotalTrans)
+
+        when (isExpense) {
+            true -> {
+                val rcListTransaction: RecyclerView = view.findViewById<RecyclerView>(R.id.recyclerView2)
+                rcListTransaction.layoutManager = LinearLayoutManager(requireContext())
+                transactionAdapter = TransactionRecyclerAdapter(requireContext(), expenses, arrayListOf(), true, this)
+                rcListTransaction.adapter = transactionAdapter
+            }
+            false -> {
+                val rcListTransaction: RecyclerView = view.findViewById<RecyclerView>(R.id.recyclerView2)
+                rcListTransaction.layoutManager = LinearLayoutManager(requireContext())
+                transactionAdapter = TransactionRecyclerAdapter(requireContext(), arrayListOf(), ingress, false, this)
+                rcListTransaction.adapter = transactionAdapter
+            }
+        }
 
         when (isExpense) {
             true -> {
@@ -103,21 +94,17 @@ class TransactionListFragment(private var expenses: MutableList<Expense>, privat
         fun onSuccess(result: Boolean)
     }
 
-    override fun onUpdateClick() {
+    override fun onUpdateClick(isExpense: Boolean, transactionId: Int) {
+        viewModel.currentTransactionState = isExpense
+        viewModel.transactionId = transactionId
         val action = ProfileFragmentDirections.actionProfileFragmentToEditTransactionFragment()
         findNavController().navigateSafe(action)
     }
 
     override fun onDeleteClick(transactionId: Int, transactions: MutableList<Transaction>, index: Int) {
-        val options =  arrayOf("First Item", "Second Item", "Third Item")
         val singleChoiceDialog = AlertDialog.Builder(requireContext())
             .setTitle("¿Esta seguro que quiere eliminar esta transacción?")
-            .setSingleChoiceItems(options, 0){dialogInterface, i ->
-
-                Toast.makeText(context, "You clicked on ${options[i]}", Toast.LENGTH_SHORT).show()
-
-            }
-            .setPositiveButton("Aceptar"){ _,_ ->
+            .setPositiveButton("Si"){ _,_ ->
                 deleteTransaction(object: ServiceCallback {
                     override fun onSuccess(result: Boolean) {
                         transactionAdapter?.deleteItem(index)
@@ -126,9 +113,40 @@ class TransactionListFragment(private var expenses: MutableList<Expense>, privat
             }
             .setNegativeButton("Cancelar"){ _,_ ->
 
-                Toast.makeText(context,"Cancel",Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context,"Cancel",Toast.LENGTH_SHORT).show()
             }.create()
 
         singleChoiceDialog.show()
     }
+
+    fun getTotalIngresses(apiServiceInterface: ServiceCallback, profile: Profile) {
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<AmountData> = service.getTotalIngresses(profile)
+
+        result.enqueue(object: Callback<AmountData> {
+            override fun onFailure(call: Call<AmountData>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<AmountData>, response: Response<AmountData>) {
+                apiServiceInterface.onSuccess(true)
+            }
+        })
+    }
+
+    fun getTotalExpenses(apiServiceInterface: ServiceCallback, profile: Profile) {
+        val service: Service = RestEngine.getRestEngine().create(Service::class.java)
+        val result: Call<AmountData> = service.getTotalExpenses(profile)
+
+        result.enqueue(object: Callback<AmountData> {
+            override fun onFailure(call: Call<AmountData>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error subiendo el perfil: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onResponse(call: Call<AmountData>, response: Response<AmountData>) {
+                apiServiceInterface.onSuccess(true)
+            }
+        })
+    }
+
 }

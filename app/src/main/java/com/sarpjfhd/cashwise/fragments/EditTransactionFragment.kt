@@ -140,6 +140,7 @@ class EditTransactionFragment : Fragment() {
             tdata.amount = amount
             tdata.expenseType = expenseType
             tdata.transactionType = transactionType
+            tdata.idBD = viewModel.transactionId
             updateTransaction(object: ServiceCallbackPOST{
                 override fun onSuccess(result: Boolean) {
 
@@ -160,7 +161,7 @@ class EditTransactionFragment : Fragment() {
 
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.body() != null) {
-                    Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
                     serviceCallback.onSuccess(true)
                 } else {
                     Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
