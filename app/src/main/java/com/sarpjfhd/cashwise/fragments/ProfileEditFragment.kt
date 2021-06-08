@@ -124,7 +124,7 @@ class ProfileEditFragment : Fragment() {
             uploadProfile(object: ServiceCallbackPOST {
                 override fun onSuccess(result: Boolean) {
                     findNavController().navigateUp()
-                    setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
+                    //setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
                 }
 
             } ,profile)

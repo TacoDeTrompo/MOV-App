@@ -90,7 +90,18 @@ class DraftUpdateFragment : Fragment() {
             }
         }
         buttonCreatePr.setOnClickListener {
-            uploadProfile(profile)
+            uploadProfile(object: ServiceCallback {
+                override fun onSuccess(result: ResponseBody?) {
+                    if (result != null) {
+                        //Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
+                        UserApplication.dbHelper.deleteProfile(viewModel.profileId)
+                        findNavController().navigateUp()
+                    } else {
+                        Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+            }, profile)
         }
         viewColor.setBackgroundColor(profile?.color?.toInt()!!)
         buttonSaveDraft.setOnClickListener {
@@ -116,7 +127,7 @@ class DraftUpdateFragment : Fragment() {
                 profile.makeNew(name, dayRange, color.toString(), description, viewModel.profileId)
                 UserApplication.dbHelper.updateProfile(profile)
                 findNavController().navigateUp()
-                setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
+                //setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
             }
         }
         viewColor.setOnClickListener {
@@ -166,7 +177,7 @@ class DraftUpdateFragment : Fragment() {
         buttonDeleteDraft.setOnClickListener {
             UserApplication.dbHelper.deleteProfile(profile.idBD)
             findNavController().navigateUp()
-            setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
+            //setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to profile.idBD))
         }
     }
 
@@ -179,7 +190,8 @@ class DraftUpdateFragment : Fragment() {
         super.onDestroy()
     }
 
-    private fun uploadProfile(profile: Profile){
+    private fun uploadProfile(apiServiceCallback: ServiceCallback, profile: Profile){
+        profile.userID = UserApplication.dbHelper.getUserData(viewModel.userId)!!.cloudId
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val result: Call<ResponseBody> = service.createProfile(profile)
 
@@ -189,14 +201,13 @@ class DraftUpdateFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.body()!! != null) {
-                    Toast.makeText(requireContext(), "El borrador ha sido subido", Toast.LENGTH_LONG).show()
-                    UserApplication.dbHelper.deleteProfile(viewModel.profileId)
-                } else {
-                    Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
-                }
+                apiServiceCallback.onSuccess(response.body())
             }
 
         })
+    }
+
+    private interface ServiceCallback {
+        fun onSuccess(result: ResponseBody?)
     }
 }

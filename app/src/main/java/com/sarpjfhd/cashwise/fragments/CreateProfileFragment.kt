@@ -184,10 +184,10 @@ class CreateProfileFragment : Fragment() {
                 } else {
                     Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
                     findNavController().navigateUp()
-                    setFragmentResult(
+                    /*setFragmentResult(
                         DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
                             DraftUpdateFragment.BUNDLE_KEY_SAVED to profile.idBD)
-                    )
+                    )*/
                 }
             }
 

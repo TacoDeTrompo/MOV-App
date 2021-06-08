@@ -74,4 +74,10 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        pagerAdapater = ViewPagerAdapater(requireActivity().supportFragmentManager, lifecycle, ProfilesDraftFragment())
+        pager.adapter = pagerAdapater
+    }
 }
