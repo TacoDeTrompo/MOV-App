@@ -138,10 +138,9 @@ class ProfileFragment : Fragment() {
         }
 
         btnDeleteProfile.setOnClickListener {
-            deleteTransaction(object: ServiceCallback {
-                override fun onSuccess(result: Boolean) {
+            deleteProfile(object: ServiceCallback {
+                override fun onSuccess(result: ResponseBody?) {
                     findNavController().navigateUp()
-                    setFragmentResult(REQUEST_KEY_SAVED, bundleOf(BUNDLE_KEY_SAVED to viewModel.profileId))
                 }
             }, profile)
         }
@@ -255,7 +254,7 @@ class ProfileFragment : Fragment() {
         })
     }
 
-    fun deleteTransaction(apiServiceInterface: ServiceCallback, profile: Profile) {
+    fun deleteProfile(apiServiceInterface: ServiceCallback, profile: Profile) {
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val result: Call<ResponseBody> = service.deleteProfile(profile)
 
@@ -265,7 +264,7 @@ class ProfileFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
+                apiServiceInterface.onSuccess(response.body())
             }
 
         })
@@ -304,6 +303,6 @@ class ProfileFragment : Fragment() {
         fun onSuccess(result: AmountData)
     }
     public interface ServiceCallback {
-        fun onSuccess(result: Boolean)
+        fun onSuccess(result: ResponseBody?)
     }
 }

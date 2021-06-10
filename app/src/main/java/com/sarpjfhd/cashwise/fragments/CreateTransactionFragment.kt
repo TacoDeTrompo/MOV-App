@@ -87,12 +87,26 @@ class CreateTransactionFragment : Fragment() {
                     UserApplication.dbHelper.insertIngress(ingress, profileId)
                 }
             }
-            uploadTransaction(tdata)
-            findNavController().navigateUp()
+            uploadTransaction(object: ServiceCallback{
+                override fun onSuccess(result: ResponseBody?) {
+                    if (result == null) {
+                        Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
+                    } else {
+                        //Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
+                        findNavController().navigateUp()
+                        /*setFragmentResult(
+                            DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
+                                DraftUpdateFragment.BUNDLE_KEY_SAVED to transactionData.idBD)
+                        )*/
+                    }
+                }
+
+            }, tdata)
+            //findNavController().navigateUp()
         }
     }
 
-    private fun uploadTransaction(transactionData: TransactionData){
+    private fun uploadTransaction(apiServiceCallback: ServiceCallback, transactionData: TransactionData){
         val service: Service = RestEngine.getRestEngine().create(Service::class.java)
         val result: Call<ResponseBody> = service.createTransaction(transactionData)
 
@@ -102,17 +116,12 @@ class CreateTransactionFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.body() == null) {
-                    Toast.makeText(requireContext(), "Error del servidor", Toast.LENGTH_LONG).show()
-                } else {
-                    //Toast.makeText(requireContext(), "El perfil ha sido subido", Toast.LENGTH_LONG).show()
-                    findNavController().navigateUp()
-                    setFragmentResult(
-                        DraftUpdateFragment.REQUEST_KEY_SAVED, bundleOf(
-                            DraftUpdateFragment.BUNDLE_KEY_SAVED to transactionData.idBD)
-                    )
-                }
+                apiServiceCallback.onSuccess(response.body())
             }
         })
+    }
+
+    private interface ServiceCallback{
+        fun onSuccess(result: ResponseBody?)
     }
 }

@@ -9,7 +9,7 @@ class Profile(profileName: String, dayRange: Int, startDate: LocalDate, color: S
     var idBD: Int = 0
     @SerializedName("profileName")
     var profileName: String = ""
-    @SerializedName("descrption")
+    @SerializedName("description")
     var descrption: String = ""
     @SerializedName("dayRange")
     var dayRange: Int

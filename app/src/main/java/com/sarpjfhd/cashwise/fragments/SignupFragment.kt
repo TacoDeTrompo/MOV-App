@@ -3,6 +3,7 @@ package com.sarpjfhd.cashwise.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -133,6 +134,10 @@ class SignupFragment : Fragment() {
                         }
                     }
                 }, user)
+            } else {
+                Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
+                editPassword.setBackgroundColor(Color.parseColor("#7F0E19"))
+                editPasswordR.setBackgroundColor(Color.parseColor("#7F0E19"))
             }
         }
     }
